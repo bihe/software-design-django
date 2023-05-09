@@ -1,0 +1,29 @@
+# SWD Django Demo
+
+The project can be used as a reference for the SWD lab course.
+This project consists of several apps with a focus on loose coupling and dependency injection.
+A good article about separation of concerns in Django projects can be found `https://emcarrio.medium.com/business-logic-in-a-django-project-a25abc64718c`.
+Good Django tutorials can be found `https://www.djangoproject.com/start/` or `https://cs50.harvard.edu/web/2020/weeks/3/`.
+
+## Installation
+
+1. Clone the repository. `git clone git@its-git.fh-salzburg.ac.at:SWD/djangodemo.git`
+2. Install Poetry: `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -`.
+3. Install dependencies with the projects main directory: `poetry install`.
+
+## Usage
+
+1. Activate the virtual environment: `poetry shell`.
+2. Create the database tables: `python manage.py migrate`
+3. Create an admin user: `python manage.py createsuperuser`
+4. Run unit tests: `python manage.py test -v 2`
+5. Run the development server: `python manage.py runserver`.
+6. Open the website in your browser: `http://localhost:8000/admin`, `http://localhost:8000/products`.
+
+## Dependency Injection
+
+This project uses the python dependency injection module, which is not part of Django itself.
+`https://python-dependency-injector.ets-labs.org/examples/django.html`
+
+
+
