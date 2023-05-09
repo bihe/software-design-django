@@ -24,4 +24,4 @@ class Customer(CustomerBase):
     class Meta:
         db_table: str = "customer_concrete"
     # we are adding a credit field to the customer model
-    credit: float = models.FloatField()
+    credit: float = models.FloatField(null=True)
