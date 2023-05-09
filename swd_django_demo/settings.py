@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
 ]
 
+# Middleware classes used in request-response processing
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,8 +54,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# URL routing configuration
 ROOT_URLCONF = 'swd_django_demo.urls'
 
+# Template configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -73,9 +75,11 @@ TEMPLATES = [
     },
 ]
 
+# Static file finders
 STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
                        'django.contrib.staticfiles.finders.AppDirectoriesFinder',]
 
+# WSGI application configuration
 WSGI_APPLICATION = 'swd_django_demo.wsgi.application'
 
 
@@ -129,18 +133,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Set the directory where collectstatic will put static files for deployment
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Add additional directories to look for static files
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # change default user model to our own
 AUTH_USER_MODEL = 'customers.Customer'
 
+# Set the model to use for products
 PRODUCT_MODEL = "products.ProductBase"
+
+# Set the model to use for customers
 CUSTOMER_MODEL = "customers.CustomerBase"
 
