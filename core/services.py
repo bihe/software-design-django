@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from django.db import models
+
 from core.models import Product
 
 """
@@ -21,6 +23,10 @@ class IProductService(ABC):
     def get_price(self, product: Product) -> float:
         pass
 
+    @abstractmethod
+    def get_by_id(self, id: int) -> models.QuerySet:
+        pass
+
 
 class IOrderService(ABC):
     """
@@ -32,12 +38,17 @@ class IOrderService(ABC):
     By passing an instance of IProductService to the IOrderService constructor, the IOrderService class can call the
     get_all_products method of the IProductService instance.
     """
+
     @abstractmethod
     def __init__(self, product_service: IProductService) -> None:
         pass
 
     @abstractmethod
     def get_all_products(self) -> List[Product]:
+        pass
+
+    @abstractmethod
+    def get_product(self, product_id: int, product_service: IProductService) -> Product:
         pass
 
 

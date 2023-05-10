@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'core.apps.CoreConfig',
     'customers.apps.CustomersConfig',
     'products.apps.ProductsConfig',
@@ -71,6 +72,12 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
             ],
+            'libraries': {
+                # 'products_tags': 'products.templatetags.products_tag',
+                # we are adding functionality to the products app from the orders app without
+                # having the product app depend on the orders app
+                'products_tags': 'orders.templatetags.orders_tag',
+            }
         },
     },
 ]
