@@ -11,6 +11,7 @@ class Order(models.Model):
     objects: OrderManager = OrderManager()
     # The user field is a foreign key to the customer who made the order
     user: models.ForeignKey = models.ForeignKey(to=CUSTOMER_MODEL, on_delete=models.PROTECT, )
+    total_price: models.FloatField = models.FloatField()
 
 
 # The OrderPosition model represents a single product in an order
@@ -22,7 +23,8 @@ class OrderPosition(models.Model):
         unique_together = (('order', 'pos'),)
 
     # The order field is a foreign key to the order that this position belongs to
-    order: models.ForeignKey[Order] = models.ForeignKey(Order, on_delete=models.CASCADE)
+    # add a related name to the foreign key, so that we can easily access the order positions of an order
+    order: models.ForeignKey[Order] = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_positions')
     # The pos field is an integer that represents the position of this order position within the order
     pos: models.PositiveIntegerField = models.PositiveIntegerField()
     # The product field is a foreign key to the product being ordered

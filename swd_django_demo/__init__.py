@@ -27,7 +27,8 @@ def wait_for_ready_event(ready_event: threading.Event) -> None:
         # with the container. This means that the container will inject the dependencies into the modules
         # allowing them to use the dependencies that they need without having to manually create them.
         container.wire(modules=["orders.views",
-                                "products.views", ])
+                                "products.views",
+                                "orders.dtos",])
 
     except Exception as e:
         _thread.interrupt_main()

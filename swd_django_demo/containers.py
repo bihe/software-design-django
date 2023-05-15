@@ -7,6 +7,8 @@ Additionally, a product_factory is defined as a factory provider that creates in
 """
 
 from dependency_injector import containers, providers
+
+from customers.services import CustomerService
 from orders.services import OrderService
 from products.models import Product
 from products.services import ProductService
@@ -22,10 +24,14 @@ class Container(containers.DeclarativeContainer):
         ProductService,
     )
 
+    customer_service = providers.Singleton(
+        CustomerService,
+    )
+
     # Factory provider for creating instances of Product model
     product_factory = providers.Factory(Product, id=int, name=str, description=str )
 
     # Singleton provider for OrderService with product_service as a dependency
     order_service = providers.Singleton(
-        OrderService, product_service=product_service
+        OrderService, product_service=product_service, customer_service=customer_service
     )

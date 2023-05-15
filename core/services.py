@@ -56,3 +56,11 @@ class ICustomerService(ABC):
     @abstractmethod
     def has_credit(self, customer) -> bool:
         pass
+
+    @abstractmethod
+    def get_by_id(self, id: int) -> models.QuerySet:
+        pass
+
+    @abstractmethod
+    def get_by_username(self, username: str) -> models.QuerySet:
+        pass

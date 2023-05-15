@@ -49,7 +49,7 @@ class IndexTests(TestCase):
         c.wire(modules=["products.views", ])
 
     def test_index(self):
-        response = self.client.get(reverse("index"))
+        response = self.client.get(reverse("products:index"))
 
         # Check that the response is 200 OK.
         self.assertEqual(response.status_code, 200)

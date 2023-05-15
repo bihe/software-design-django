@@ -1,10 +1,12 @@
 from dependency_injector.wiring import inject, Provide
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 
 from core.models import Product
 from core.services import IOrderService
+from orders.dtos import OrderDTO
 
 
 @inject
@@ -34,7 +36,7 @@ def add_to_basket(request: HttpRequest, order_service: IOrderService = Provide["
             raise Http404("Product does not exist")
 
         # Retrieve the list of products from the session
-        product_list = request.session.get('product_list', [])
+        product_list: [] = request.session.get('product_list', [])
 
         # Add the product ID to the list
         product_list.append(product_id)
@@ -50,3 +52,24 @@ def add_to_basket(request: HttpRequest, order_service: IOrderService = Provide["
         return redirect(request.META.get('HTTP_REFERER'))
 
     return HttpResponseBadRequest("Invalid request method")
+
+
+@inject
+def basket_overview(request: HttpRequest, order_service: IOrderService = Provide["order_service"]) -> HttpResponse:
+    product_list = request.session.get('product_list', [])
+
+    order_dto: OrderDTO = order_service.get_order_dto(request.user, product_list)
+
+    request.session["order"] = OrderDTO().dump(order_dto)
+    context = {
+        'order': order_dto,
+    }
+    template = loader.get_template("orders/basket_overview.html")
+    return HttpResponse(template.render(context, request))
+
+
+@inject
+def place_order(request: HttpRequest, order_service: IOrderService = Provide["order_service"]) -> HttpResponse:
+    order_id = order_service.create_order(request.session.get('order'))
+
+    return HttpResponse("Order created with id: " + str(order_id))
