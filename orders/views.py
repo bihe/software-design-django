@@ -71,5 +71,9 @@ def basket_overview(request: HttpRequest, order_service: IOrderService = Provide
 @inject
 def place_order(request: HttpRequest, order_service: IOrderService = Provide["order_service"]) -> HttpResponse:
     order_id = order_service.create_order(request.session.get('order'))
-
-    return HttpResponse("Order created with id: " + str(order_id))
+    if order_id is None:
+        return HttpResponseBadRequest("Could not create order")
+    else:
+        del request.session['product_list']
+        del request.session['order']
+        return HttpResponse("Order created with id: " + str(order_id))

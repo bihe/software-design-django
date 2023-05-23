@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from dependency_injector.wiring import inject, Provide
 from django.db import transaction
@@ -74,18 +74,32 @@ class OrderService(IOrderService):
 
         return order
 
-    def create_order(self, order_dto: OrderDTO) -> int:
+    def create_order(self, order_dto: OrderDTO) -> Optional[int]:
         # loading the order_dto into the Order model already saves the order and order positions to the database
         # in case of an error, the transaction will be rolled back, so we use the atomic decorator
-        with transaction.atomic():
-            order: Order = OrderDTO().load(order_dto)
-        return order.id
+        # putting everything into an atomic transaction also give us the possibility to handle multiuser concurrency
+        # have a look at the customer_service.redeem_credit method to see how this is done
+        try:
+            with transaction.atomic():
+                # this will call the make_order_from_dto method below,
+                # see dtos.py where special conversion method is defined with @post_load()
+                order: Order = OrderDTO().load(order_dto)
+                return order.id
+        except Exception as e:
+                print(e)
+                return None
 
     def make_order_from_dto(self, data, **kwargs) -> Order:
         order_positions = data.pop('order_positions', [])
         customer_data = data.pop('customer', {})
         user_name = customer_data.get('username')
         customer = self.customer_service.get_by_username(user_name)
+
+        # check if the customer has enough credit
+        total_price = sum(position['price'] * position['quantity'] for position in order_positions)
+        if not self.customer_service.redeem_credit(customer, total_price):
+            raise Exception('Not enough credit')
+
         order = Order(user=customer, **data)
         order.save();
         for order_position in order_positions:
