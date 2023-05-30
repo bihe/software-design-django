@@ -7,18 +7,20 @@ Good Django tutorials can be found `https://www.djangoproject.com/start/` or `ht
 
 ## Installation
 
-1. Clone the repository. `git clone git@its-git.fh-salzburg.ac.at:SWD/djangodemo.git`
-2. Install Poetry: `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -`.
-3. Install dependencies with the projects main directory: `poetry install`.
-
+1. Clone the repository. `git clone https://its-git.fh-salzburg.ac.at/SWD/djangodemo.git`
+2. Install Poetry: `https://python-poetry.org/docs/#installation`
+   - Mac/Linux: `curl -sSL https://install.python-poetry.org | python3 -`
+   - Windows (Powershell): `(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -`
+ 
 ## Usage
 
-1. Activate the virtual environment: `poetry shell`.
-2. Create the database tables: `python manage.py migrate`
-3. Create an admin user: `python manage.py createsuperuser`
-4. Run unit tests: `python manage.py test -v 2`
-5. Run the development server: `python manage.py runserver`.
-6. Open the website in your browser: `http://localhost:8000/admin`, `http://localhost:8000/products`.
+1. Install dependencies with the projects main directory: `poetry install`.
+2. Activate the virtual environment: `poetry shell`.
+3. Create the database tables: `python manage.py migrate`
+4. Create an admin user: `python manage.py createsuperuser`
+5. Run unit tests: `python manage.py test -v 2`
+6. Run the development server: `python manage.py runserver`.
+7. Open the website in your browser: `http://localhost:8000/admin`, `http://localhost:8000/products`.
 
 ## Dependency Injection
 
