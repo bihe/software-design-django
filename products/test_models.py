@@ -4,7 +4,7 @@ from products.models import Product
 
 # This test class inherits from the TestCase class, which is provided by Django (not form unittest),
 # as it provides some additional functionality that we need for testing Django models.
-class ProductTestCase(TestCase):
+class TestProduct(TestCase):
     def setUp(self) -> None:
         pass
 
