@@ -14,7 +14,8 @@ Good Django tutorials can be found `https://www.djangoproject.com/start/` or `ht
  
 ## Usage
 
-1. Install dependencies with the projects main directory: `poetry install`.
+1. Install dependencies within the projects main directory: `poetry install`.
+   If you run into an error like "failed to query /usr/bin/python ... invalid syntax", then poetry is run using python 2. Tell poetry which python version to use: `poetry env use python3.11`
 2. Activate the virtual environment: `poetry shell`.
 3. Create the database tables: `python manage.py migrate`
 4. Create an admin user: `python manage.py createsuperuser`
