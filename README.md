@@ -6,8 +6,10 @@ Good Django tutorials can be found `https://www.djangoproject.com/start/` or `ht
 
 ## Installation
 
-1. Clone the repository. `git clone git@its-git.fh-salzburg.ac.at:SWD/djangodemo.git`
-2. Install Poetry: `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -`.
+1. Clone the repository. `git clone git@its-git.fh-salzburg.ac.at:SWD/djangodemo.git` or `git clone https://its-git.fh-salzburg.ac.at/SWD/djangodemo.git`
+2. Install Poetry: `https://python-poetry.org/docs/#installation`
+   - Mac/Linux: `curl -sSL https://install.python-poetry.org | python3 -`
+   - Windows (Powershell): `(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -`
 
 ### Usage
 
