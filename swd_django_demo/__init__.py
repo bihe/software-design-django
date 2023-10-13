@@ -5,12 +5,21 @@ import threading
 from django.apps import apps
 from swd_django_demo import settings
 
+# this is going to be our container for dependency injection
+container = None
+
+
+# retrieve the container
+def get_container():
+    return container
+
 
 # Defining a function to wait for a ready event (when all apps are loaded)
 # and then create the container containing the dependencies and wire it.
 # This is done in a separate thread to avoid blocking the main thread.
 
 def wait_for_ready_event(ready_event: threading.Event) -> None:
+    global container
     print('wait_for_event starting')
     event_is_set = ready_event.wait()
 
@@ -28,7 +37,7 @@ def wait_for_ready_event(ready_event: threading.Event) -> None:
         # allowing them to use the dependencies that they need without having to manually create them.
         container.wire(modules=["orders.views",
                                 "products.views",
-                                "orders.dtos",])
+                                "orders.dtos", ])
 
     except Exception as e:
         _thread.interrupt_main()
