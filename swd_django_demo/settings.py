@@ -101,6 +101,40 @@ DATABASES = {
 }
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        },
+        # Add other formatters as needed
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'console-verbose': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        # Add other handlers as needed for your project
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        # Configure custom logger for the app
+        'orders': {
+            'handlers': ['console-verbose'],
+            'level': 'DEBUG',
+        },
+        # Add other app loggers as needed
+    },
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 # for easier testing we will allow unsecure passwords

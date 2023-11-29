@@ -1,4 +1,6 @@
+import logging
 from typing import List, Optional
+from .logging import logger
 
 from dependency_injector.wiring import inject, Provide
 from django.db import transaction
@@ -23,6 +25,7 @@ class OrderService(IOrderService):
     # inject decorator is used to inject dependencies into the constructor method.
     @inject
     def __init__(self, product_service: Provide("product_service"), customer_service: Provide("customer_service")):
+        logger.debug(f"OrderService.__init__(product_service: {product_service}, customer_service: {customer_service}")
         """
         Constructor method to initialize OrderService class.
         Args:
@@ -36,12 +39,15 @@ class OrderService(IOrderService):
         self.customer_service = customer_service
 
     def get_all_products(self) -> List[Product]:
+        logger.debug(f"OrderService.get_all_products()")
         return self.product_service.get_all_products()
 
     def get_product(self, product_id: int) -> Product:
+        logger.debug(f"OrderService.get_product(product_id : {product_id})")
         return self.product_service.get_by_id(product_id)
 
     def get_order_dto(self, customer: Customer, product_list: []) -> OrderDTO:
+        logger.debug(f"OrderService.get_order_dto(customer: {customer}, product_list: {product_list})")
         order: OrderDTO = OrderDTO()
         order.customer = CustomerSerializer().dump(customer)
         order_positions: [] = []  # List to store the order positions
@@ -75,6 +81,7 @@ class OrderService(IOrderService):
         return order
 
     def create_order(self, order_dto: OrderDTO) -> Optional[int]:
+        logger.debug(f"OrderService.create_order(order_dto: {order_dto})")
         # loading the order_dto into the Order model already saves the order and order positions to the database
         # in case of an error, the transaction will be rolled back, so we use the atomic decorator
         # putting everything into an atomic transaction also give us the possibility to handle multiuser concurrency
@@ -90,6 +97,7 @@ class OrderService(IOrderService):
                 return None
 
     def make_order_from_dto(self, data, **kwargs) -> Order:
+        logger.debug(f"OrderService.create_order(data: {data}, kwargs: {kwargs})")
         order_positions = data.pop('order_positions', [])
         customer_data = data.pop('customer', {})
         user_name = customer_data.get('username')
