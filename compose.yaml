@@ -12,6 +12,12 @@ services:
     environment:
       - MYSQL_DATABASE=django-demo
       - MYSQL_ROOT_PASSWORD=root-password
+    healthcheck:
+      test: ["CMD", "mariadb", "--user=root", "--password=root-password", "--execute", "use", "django-demo"]
+      interval: 2s
+      timeout: 10s
+      retries: 3
+      start_period: 2s
   
   app:
       build:
@@ -25,6 +31,10 @@ services:
         - frontend
       ports:
         - "8000:8000"
+      depends_on:
+        database:
+          condition: service_healthy
+          restart: true
              
 networks:
   backend:

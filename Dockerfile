@@ -45,9 +45,9 @@ ENV DJANGO_SUPERUSER_PASSWORD=admin \
     PATH="/opt/django-demo/.venv/bin:$PATH"
 
 # still we needs some additional stuff
-# we want the mariadb (very, very similar to mysql) to access the db and for our startup script
-# the startup script checks when the db is ready to start the django-app later.
-RUN apt-get update && apt-get install -y libmariadb3 mariadb-client
+# we need mariadb library (very, very similar to mysql) to access the db
+# this is the runtime library dependency of mysqlclient
+RUN apt-get update && apt-get install -y libmariadb3
 
 # copy the poetry created python environment to the runtime image
 COPY --from=builder /app/.venv /opt/django-demo/.venv
