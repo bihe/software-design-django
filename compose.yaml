@@ -3,7 +3,7 @@ version: '3'
 services:
   database:
     image: mariadb:11-jammy
-    restart: always
+      #restart: always
     # would be better to have a local folder where the database files are persisted
     #volumes:
     #- ./database-data:/var/lib/mysql
@@ -24,8 +24,8 @@ services:
         context: .
         dockerfile: ./Dockerfile
       image: django-demo
-      restart:
-        always
+        #restart:
+        #always
       networks:
         - backend
         - frontend
@@ -34,7 +34,7 @@ services:
       depends_on:
         database:
           condition: service_healthy
-          restart: true
+            #restart: true
              
 networks:
   backend:
