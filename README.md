@@ -8,7 +8,8 @@ Good Django tutorials can be found `https://www.djangoproject.com/start/` or `ht
 You need to have a working python installation on your local system. Best-Practise is to use python from the official website: https://www.python.org/.
 Please use the **latest 3.11** version available (https://www.python.org/downloads/). 
 
-== Notice: The python version 3.12 seems NOT to be compatible with the dependency-injector-package (https://python-dependency-injector.ets-labs.org/main/changelog.html) 
+<mark>
+Notice: The python version 3.12 seems NOT to be compatible with the dependency-injector-package (https://python-dependency-injector.ets-labs.org/main/changelog.html) 
 Make sure to have Python 3.11 installed.
 When you are in the python environment (typically after `poetry shell`) make sure that the postfix of the environment (shown in braces in front of your promp) contains py3.11 at the end (e.g. (swd-django-demo-py3.11)). If it is something with 3.12, you need to create a new venv with python 3.11 by following these steps:
  - make sure you are in your projects main directory
@@ -16,7 +17,7 @@ When you are in the python environment (typically after `poetry shell`) make sur
  - `poetry env use python3.11`
  - restart your IDE
  - after `poetry shell` you should have activated a venv based on python 3.11.
-==
+</mark>
 
 
 ## Installation
