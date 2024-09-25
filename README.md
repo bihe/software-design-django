@@ -11,12 +11,12 @@ Please use the **latest 3.11** version available (https://www.python.org/downloa
 <mark>
 Notice: The python version 3.12 seems NOT to be compatible with the dependency-injector-package (https://python-dependency-injector.ets-labs.org/main/changelog.html) 
 Make sure to have Python 3.11 installed.
-When you are in the python environment (typically after `poetry shell`) make sure that the postfix of the environment (shown in braces in front of your promp) contains py3.11 at the end (e.g. (swd-django-demo-py3.11)). If it is something with 3.12, you need to create a new venv with python 3.11 by following these steps:
- - make sure you are in your projects main directory
- - `peotry env remove python`
- - `poetry env use python3.11`
- - restart your IDE
- - after `poetry shell` you should have activated a venv based on python 3.11.
+When you are in the python environment (typically after `poetry shell`) make sure that the postfix of the environment (shown in braces in front of your promp) contains py3.11 at the end (e.g. (swd-django-demo-py3.11)). If it is something with 3.12, you need to create a new venv with python 3.11 by following these steps:<br>
+ - make sure you are in your projects main directory<br>
+ - `peotry env remove python`<br>
+ - `poetry env use python3.11`<br>
+ - restart your IDE<br>
+ - after `poetry shell` you should have activated a venv based on python 3.11.<br>
 </mark>
 
 
