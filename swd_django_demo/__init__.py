@@ -40,6 +40,7 @@ def wait_for_ready_event(ready_event: threading.Event) -> None:
                                 "orders.dtos", ])
 
     except Exception as e:
+        print("Exception occurred during dependency injection: ", e)
         _thread.interrupt_main()
 
 
