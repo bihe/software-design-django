@@ -181,6 +181,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Add additional directories to look for static files
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# we are going to reuse the existing admin login page also for users
+LOGIN_URL = '/admin/login/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
