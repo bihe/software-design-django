@@ -1,29 +1,28 @@
 import logging
 from typing import List, Optional
-from .logging import logger
 
-from dependency_injector.wiring import inject, Provide
+from dependency_injector.wiring import Provide, inject
 from django.db import transaction
 
 from core.serializers import CustomerSerializer
 from orders.dtos import OrderDTO, OrderPositionDTO, ProductSerializer
 from orders.models import Order, OrderPosition
 
+from .logging import logger
+
 """
 Please note, that we are only importing the interfaces from the core module and not the concrete classes.
 So this module can be used with any concrete product module implementation.
 """
-from core.models import Product, Customer
+from core.models import Customer, Product
 from core.services import IOrderService
 
 
 class OrderService(IOrderService):
     """
-     A class that implements IOrderService interface to handle order related business logic.
-     """
+    A class that implements IOrderService interface to handle order related business logic.
+    """
 
-    # inject decorator is used to inject dependencies into the constructor method.
-    @inject
     def __init__(self, product_service: Provide("product_service"), customer_service: Provide("customer_service")):
         logger.debug(f"OrderService.__init__(product_service: {product_service}, customer_service: {customer_service}")
         """
@@ -39,14 +38,14 @@ class OrderService(IOrderService):
         self.customer_service = customer_service
 
     def get_all_products(self) -> List[Product]:
-        logger.debug(f"OrderService.get_all_products()")
+        logger.debug("OrderService.get_all_products()")
         return self.product_service.get_all_products()
 
     def get_product(self, product_id: int) -> Product:
         logger.debug(f"OrderService.get_product(product_id : {product_id})")
         return self.product_service.get_by_id(product_id)
 
-    def get_order_dto(self, customer: Customer, product_list: []) -> OrderDTO:
+    def get_order_dto(self, customer: Customer, product_list: list[Product]) -> OrderDTO:
         logger.debug(f"OrderService.get_order_dto(customer: {customer}, product_list: {product_list})")
         order: OrderDTO = OrderDTO()
         order.customer = CustomerSerializer().dump(customer)
@@ -67,11 +66,11 @@ class OrderService(IOrderService):
                 pos += 1
                 product_pos_map[product_id] = pos - 1
                 orderpos: OrderPositionDTO = OrderPositionDTO()
-                orderpos.pos=pos
-                orderpos.product=product_serialized
-                orderpos.quantity=1
+                orderpos.pos = pos
+                orderpos.product = product_serialized
+                orderpos.quantity = 1
                 # we need to get the price from the product service, because the abstract product does not have price
-                orderpos.price=self.product_service.get_price(product)
+                orderpos.price = self.product_service.get_price(product)
                 total_price += orderpos.price
                 order_positions.append(orderpos)  # Add the order position to the list
 
@@ -93,29 +92,28 @@ class OrderService(IOrderService):
                 order: Order = OrderDTO().load(order_dto)
                 return order.id
         except Exception as e:
-                print(e)
-                return None
+            print(e)
+            return None
 
     def make_order_from_dto(self, data, **kwargs) -> Order:
         logger.debug(f"OrderService.create_order(data: {data}, kwargs: {kwargs})")
-        order_positions = data.pop('order_positions', [])
-        customer_data = data.pop('customer', {})
-        user_name = customer_data.get('username')
+        order_positions = data.pop("order_positions", [])
+        customer_data = data.pop("customer", {})
+        user_name = customer_data.get("username")
         customer = self.customer_service.get_by_username(user_name)
 
         # check if the customer has enough credit
-        total_price = sum(position['price'] * position['quantity'] for position in order_positions)
+        total_price = sum(position["price"] * position["quantity"] for position in order_positions)
         if not self.customer_service.redeem_credit(customer, total_price):
-            raise Exception('Not enough credit')
+            raise Exception("Not enough credit")
 
         order = Order(user=customer, **data)
-        order.save();
+        order.save()
         for order_position in order_positions:
-            product_id = order_position.pop('product', {}).get('id')
+            product_id = order_position.pop("product", {}).get("id")
             product = self.product_service.get_by_id(product_id)
             order_position = OrderPosition(**order_position, product=product)
             order_position.order = order
             order_position.save()
 
         return order
-
