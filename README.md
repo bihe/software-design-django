@@ -14,20 +14,20 @@ In a **Unix-like environments** like Mac/Linux typically a good shell is availab
 
 For **Windows** a good combination of shell/terminal is [PowerShell](https://github.com/PowerShell/PowerShell)/[Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/). 
 
-> [!TIP]
+> [!tip]
 >**Powershell**: For windows users it is quite helpful to set the execution-policy for powershell:
 >
 >```bash
 >Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 >```
 
-> [!TIP]
+> [!tip]
 > **Windows NOTE**:  When you want to execute python in a `shell` and the Windows App-Store opens, you need to deactivate this Windows-Behavior: https://stackoverflow.com/questions/58754860/cmd-opens-windows-store-when-i-type-python
 
 ### Python
 What is python?
 
-> [!NOTE]
+> [!note]
 > Python is an interpreted, object-oriented, high-level programming language with dynamic semantics. (https://www.python.org/doc/essays/blurb/)
 
 For this example the most recent python version is used https://peps.python.org/pep-0719/
@@ -43,7 +43,7 @@ To install python itself and as a python package manager we are using the tool [
 ## 2. Development
 Best practice for any python development is to start with a virtual environment. This approach and workflow is already integrated into [uv - Project Environment](https://docs.astral.sh/uv/concepts/projects/layout/#the-project-environment)
 
-> [!NOTE]
+> [!note]
 > You benefit from the virtual environment since packages can be installed confidently and will not interfere with another project’s environment.
 
 ### Usage
@@ -65,7 +65,7 @@ Or if you want to start with a fresh Django project from scratch:
 5. Create a new Django project: `uv run django-admin startproject django_project .`
 6. Add Django applications: `uv run manage.py startapp app_name`
 
-> [!TIP]
+> [!tip]
 >**Windows**: A realtime virus scanning engine like [Windows Defender](https://www.microsoft.com/en-us/windows/comprehensive-security?r=1) sometimes gets in the way during development. As a result common development actions (compilation, execution of scripts, ..) take ages. To speed up the process it can make sense to disable realtime-scanning during compilation or exclude paths in the scan engine (be aware that this has a security impact!)
 >
 >- [Deactivate Real-Time Scanning](https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960)
