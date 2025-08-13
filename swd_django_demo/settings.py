@@ -71,10 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
             ],
             "libraries": {
-                # 'products_tags': 'products.templatetags.products_tag',
-                # we are adding functionality to the products app from the orders app without
-                # having the product app depend on the orders app
-                "products_tags": "orders.templatetags.orders_tag",
+                "orders_tags": "orders.templatetags.orders_tag",
             },
         },
     },

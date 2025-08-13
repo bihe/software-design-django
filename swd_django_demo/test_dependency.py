@@ -12,19 +12,19 @@ class TestDependencyContainer(TestCase):
 
     def test_product_service(self):
         # fetch the ProductService from the container
-        product_service = self.container.product_service();
+        product_service = self.container.product_service()
         # check that product_service is not None
         self.assertIsNotNone(product_service)
 
     def test_customer_service(self):
         # fetch the CustomerService from the container
-        customer_service = self.container.customer_service();
+        customer_service = self.container.customer_service()
         # check that customer_service is not None
         self.assertIsNotNone(customer_service)
 
     def test_order_service(self):
         # fetch the OrderService from the container
-        order_service = self.container.order_service();
+        order_service = self.container.order_service()
         # check that order_service is not None
         self.assertIsNotNone(order_service)
         # check that order_service has a product_service

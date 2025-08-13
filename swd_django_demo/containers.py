@@ -29,7 +29,7 @@ class Container(containers.DeclarativeContainer):
     )
 
     # Factory provider for creating instances of Product model
-    product_factory = providers.Factory(Product, id=int, name=str, description=str )
+    product_factory = providers.Factory(Product, id=int, name=str, description=str)
 
     # Singleton provider for OrderService with product_service as a dependency
     order_service = providers.Singleton(

@@ -7,7 +7,7 @@ Good Django tutorials can be found `https://www.djangoproject.com/start/` or `ht
 
 ## 1. Requirements
 
-### Shell for CLI workflow
+### 1.1 Shell for CLI workflow
 Software development needs to interact with the system. Therefor we will encounter an number of CLI (command line interface) tools. To do this effectively we need to use a shell.
 
 In a **Unix-like environments** like Mac/Linux typically a good shell is available out of the box (bash, zsh) in combination with a terminal (terminal, iTerm, Konsole, gnome-terminal, ...). 
@@ -24,7 +24,7 @@ For **Windows** a good combination of shell/terminal is [PowerShell](https://git
 > [!tip]
 > **Windows NOTE**:  When you want to execute python in a `shell` and the Windows App-Store opens, you need to deactivate this Windows-Behavior: https://stackoverflow.com/questions/58754860/cmd-opens-windows-store-when-i-type-python
 
-### Python
+### 1.2 Python
 What is python?
 
 > [!note]
@@ -46,7 +46,7 @@ Best practice for any python development is to start with a virtual environment.
 > [!note]
 > You benefit from the virtual environment since packages can be installed confidently and will not interfere with another project’s environment.
 
-### Usage
+### 2.1 Usage
 
 1. Install dependencies with the projects main directory: `uv sync`.
 2. Activate the virtual environment: `source .venv/bin/activate` / `./.venv/bin/activate.ps1`
@@ -71,12 +71,15 @@ Or if you want to start with a fresh Django project from scratch:
 >- [Deactivate Real-Time Scanning](https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960)
 >- [Exclude Folder for Scanning](https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26)
 
-### IDE
+### 2.2 IDE
 There are a number of IDEs available for python development. You can choose between different variants like [VSCode](https://code.visualstudio.com/), [PyCharm](https://www.jetbrains.com/pycharm/), [VIM](https://realpython.com/vim-and-python-a-match-made-in-heaven/), ...
 
-### Dependency Injection
-This project uses the python dependency injection module, which is not part of Django itself.
-`https://python-dependency-injector.ets-labs.org/examples/django.html`
+#### 2.2.1 Unittests & VSCode
+To enable Django-based unittest in VSCode, follow the documentation: https://code.visualstudio.com/docs/python/testing#_django-unit-tests
+
+### 2.3 Dependency Injection
+A very often used concept in software-design is **dependency injection** (or inversion of control). A very, very good intro-video regarding DI (dependency injection) can be found on *youtube*, ["Dependency Injection, The Best Pattern"](https://www.youtube.com/embed/J1f5b4vcxCQ?si=Qb4pFAWWazOvzPjm). 
+For `Django projects`initialization code is needed to work with the package [*dependency-injector*](https://pypi.org/project/dependency-injector/) --> https://python-dependency-injector.ets-labs.org/examples/django.html
 
 
 
