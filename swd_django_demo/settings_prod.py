@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=gtp5z3(w^-$8gm7a4h#tj-=5$lr09#lv522%=wk0)h=dfh^8-"
+SECRET_KEY = "nu9ohshieg3xot3seiquohs4eeMee9ponohvaizum9Usheepudo7gijahxohL3ye"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -72,10 +72,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
             ],
             "libraries": {
-                # 'products_tags': 'products.templatetags.products_tag',
-                # we are adding functionality to the products app from the orders app without
-                # having the product app depend on the orders app
-                "products_tags": "orders.templatetags.orders_tag",
+                "core_tags": "core.templatetags.navigation",
+                "orders_tags": "orders.templatetags.orders_tag",
             },
         },
     },
@@ -94,16 +92,22 @@ WSGI_APPLICATION = "swd_django_demo.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "django-demo",
+#         "USER": "root",
+#         "PASSWORD": "root-password",
+#         "HOST": "database",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "django-demo",
-        "USER": "root",
-        "PASSWORD": "root-password",
-        "HOST": "database",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 LOGGING = {
     "version": 1,
@@ -183,6 +187,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     # "/var/www/static/",
 ]
+
+# we are going to reuse the existing admin login page also for users
+LOGIN_URL = "/admin/login/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

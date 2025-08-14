@@ -1,6 +1,6 @@
 from dependency_injector.wiring import Provide, inject
-from django.http import HttpRequest, HttpResponse
-from django.template import loader
+from django.http import HttpRequest
+from django.shortcuts import render
 
 from core.services import IProductService
 
@@ -15,10 +15,8 @@ def index(
     # get all products from the product service
     # (note that we are not using a concrete product service, but an interface
     products_list = product_service.get_all_products()
-    # load the template and render it with the products list
-    template = loader.get_template("products/index.html")
     # the context is a dictionary that is used to pass data to the template
     context = {
         "products_list": products_list,
     }
-    return HttpResponse(template.render(context, request))
+    return render(request, "products/index.html", context)

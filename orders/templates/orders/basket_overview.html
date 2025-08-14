@@ -34,13 +34,24 @@
 
 
 {% if user.is_authenticated %}
+    
+    {% if order.order_positions %}
+
     <div class="order-total">
         <h4>Order Total: ${{ order.total_price }}</h4>
     </div>
     <form method="POST" action="{% url 'orders:place_order' %}">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success">Place Order</button>
+        <button type="submit" class="btn btn-success"><i class="bi bi-credit-card"></i> Place Order</button>
+
+        <a class="btn btn-danger" href="{% url 'orders:clear_basket' %}"><i class="bi bi-x-square"></i> Clear Basket</a>
     </form>
+
+   
+
+    {% endif %}
+
+
 {% else %}
     <p>Please <a href="{% url 'admin:login' %}?next={% url 'orders:basket_overview' %}">log in</a> to place an order.</p>
 {% endif %}

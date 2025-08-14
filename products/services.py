@@ -21,4 +21,3 @@ class ProductService(IProductService):
             return Product.objects.get(id=id)
         except Product.DoesNotExist:
             return None
-

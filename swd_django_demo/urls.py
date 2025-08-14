@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 
+from swd_django_demo import settings
+
 # Map URLs to views
 urlpatterns = [
     # Map the "/" URL to the "orders" application's URLs
@@ -29,6 +31,14 @@ urlpatterns = [
     # Map the "admin/" URL to the Django admin site
     path("admin/", admin.site.urls),
 ]
+
+if not settings.TESTING:
+    if settings.DEBUG:
+        from debug_toolbar.toolbar import debug_toolbar_urls
+
+        urlpatterns = [
+            *urlpatterns,
+        ] + debug_toolbar_urls()
 
 # Serve static files in development
 urlpatterns += staticfiles_urlpatterns()
