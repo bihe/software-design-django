@@ -16,16 +16,18 @@ Including another URLconf
 
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import path, include
+from django.urls import include, path
 
 # Map URLs to views
 urlpatterns = [
+    # Map the "/" URL to the "orders" application's URLs
+    path("", include("core.urls")),
     # Map the "orders/" URL to the "orders" application's URLs
     path("orders/", include("orders.urls")),
     # Map the "products/" URL to the "products" application's URLs
     path("products/", include("products.urls")),
     # Map the "admin/" URL to the Django admin site
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 ]
 
 # Serve static files in development

@@ -71,6 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
             ],
             "libraries": {
+                "core_tags": "core.templatetags.navigation",
                 "orders_tags": "orders.templatetags.orders_tag",
             },
         },

@@ -5,7 +5,7 @@ from core.models import Product
 register = template.Library()
 
 
-@register.inclusion_tag("orders/add_to_basket_form.html")
+@register.inclusion_tag("orders/tags/add_to_basket_form.html")
 def button_add_to_basket(product: Product):
     # Determine the additional functionality based on the context
     # ...
@@ -13,7 +13,7 @@ def button_add_to_basket(product: Product):
     return {"product": product}
 
 
-@register.inclusion_tag("orders/basket_link.html", takes_context=True)
+@register.inclusion_tag("orders/tags/basket_link.html", takes_context=True)
 def show_basket_Link(context):
     request = context["request"]
     product_list = request.session.get("product_list", [])

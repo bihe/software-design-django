@@ -1,0 +1,91 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+
+<style type="text/css">
+    
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9em;
+        color: #000000;
+        background-color: #ffffff;
+    }
+
+    .container .item {
+        text-align: center
+    }
+
+    .container h2 {
+        font-size: 1.5rem;
+        font-weight: 500;
+        letter-spacing: 0.041875rem
+    }
+
+    .appcontent {
+        padding-top: 0
+    }
+
+    .contentArea {
+        height: 100%;
+        overflow: hidden
+    }
+
+    .bodyContent {
+        overflow: auto;
+        height: 100vh;
+        background-color: #ffffff;
+        padding-left: 0;
+        padding-right: 0
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%
+    }
+
+    .applicationError {
+        padding: 20px
+    }
+
+    .errorText {
+        color: var(--bs-form-invalid-border-color)
+    }
+
+    .errorDetails {
+        padding: 7px;
+        background-color: #eeeeee;
+        border: 1px dashed #999999;
+        border-radius: 7px
+    }
+</style>
+
+
+<div class="container appcontent" style="height: 100%">
+
+    <div class="row contentArea">
+        <div class="col-main bodyContent">
+            <div class="container">
+                <div class="item"><img src="{% static 'img/access-denied.svg' %}" width="100px">
+                    <h2>Access denied</h2>
+                    <p>You are not logged in or you do not have permission to access this page!</p>
+                    <a href="{% url 'admin:login' %}?next=/">
+                        <button type="button" class="btn btn-lg btn-warning">Login to access the page</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
