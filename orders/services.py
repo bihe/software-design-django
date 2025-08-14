@@ -1,11 +1,10 @@
-import logging
 from typing import List, Optional
 
 from dependency_injector.wiring import Provide, inject
 from django.db import transaction
+from marshmallow import Schema, fields, post_load
 
-from core.serializers import CustomerSerializer
-from orders.dtos import OrderDTO, OrderPositionDTO, ProductSerializer
+from core.serializers import CustomerSerializer, ProductSerializer
 from orders.models import Order, OrderPosition
 
 from .logging import logger
@@ -16,6 +15,31 @@ So this module can be used with any concrete product module implementation.
 """
 from core.models import Customer, Product
 from core.services import IOrderService
+
+# Parallel class representing the Order/OrderPosition entity called *Models. This is a quite common pattern
+# to tranfere data between the service and the views. Those objects are called View-Models
+# (or Data-Transfer-Objects when you come from Java/C#)
+#
+# It would not be easy to use the Django model directly in the views, especially when the # model is complex and
+# when we do not want to save the object already in the database and working with not yet saved
+# objects is not easy in Django (e.g. the id is not yet set, so we cannot use it, cannot access foreign key
+# objects, ..) (limitations due to the Active Record pattern in Django ORM)
+
+
+class OrderModel(Schema):
+    # The as_string=True option is used to ensure that the id is serialized as a string to avoid integer overflow
+    order_number: fields.Integer = fields.Integer(as_string=True, attribute="id")
+    customer: fields.Nested = fields.Nested(CustomerSerializer)
+    order_positions: fields.Nested = fields.Nested("OrderPositionModel", many=True)
+    total_price: fields.Float = fields.Float()
+
+
+# Parallel class representing the OrderPosition entity
+class OrderPositionModel(Schema):
+    pos: fields.Int = fields.Int()
+    product: fields.Nested = fields.Nested(ProductSerializer)
+    quantity: fields.Int = fields.Int()
+    price: fields.Float = fields.Float()
 
 
 class OrderService(IOrderService):
@@ -45,9 +69,9 @@ class OrderService(IOrderService):
         logger.debug(f"OrderService.get_product(product_id : {product_id})")
         return self.product_service.get_by_id(product_id)
 
-    def get_order_dto(self, customer: Customer, product_list: list[Product]) -> OrderDTO:
+    def get_order_model(self, customer: Customer, product_list: list[Product]) -> OrderModel:
         logger.debug(f"OrderService.get_order_dto(customer: {customer}, product_list: {product_list})")
-        order: OrderDTO = OrderDTO()
+        order: OrderModel = OrderModel()
         order.customer = CustomerSerializer().dump(customer)
         order_positions: [] = []  # List to store the order positions
         product_pos_map: {} = {}  # Map to store the product id and position in the order
@@ -55,7 +79,7 @@ class OrderService(IOrderService):
         total_price: float = 0.0
         for product_id in product_list:
             if product_id in product_pos_map:
-                orderpos: OrderPositionDTO = order_positions[product_pos_map[product_id]]
+                orderpos: OrderPositionModel = order_positions[product_pos_map[product_id]]
                 orderpos.quantity += 1
                 total_price += self.product_service.get_price(self.product_service.get_by_id(product_id))
             else:
@@ -65,7 +89,7 @@ class OrderService(IOrderService):
                 product_serialized = ProductSerializer().dump(product)
                 pos += 1
                 product_pos_map[product_id] = pos - 1
-                orderpos: OrderPositionDTO = OrderPositionDTO()
+                orderpos: OrderPositionModel = OrderPositionModel()
                 orderpos.pos = pos
                 orderpos.product = product_serialized
                 orderpos.quantity = 1
@@ -79,7 +103,7 @@ class OrderService(IOrderService):
 
         return order
 
-    def create_order(self, order_dto: OrderDTO) -> Optional[int]:
+    def create_order(self, order_dto: OrderModel) -> Optional[int]:
         logger.debug(f"OrderService.create_order(order_dto: {order_dto})")
         # loading the order_dto into the Order model already saves the order and order positions to the database
         # in case of an error, the transaction will be rolled back, so we use the atomic decorator
@@ -89,14 +113,15 @@ class OrderService(IOrderService):
             with transaction.atomic():
                 # this will call the make_order_from_dto method below,
                 # see dtos.py where special conversion method is defined with @post_load()
-                order: Order = OrderDTO().load(order_dto)
+                order: Order = OrderModel().load(order_dto)
                 return order.id
         except Exception as e:
             print(e)
             return None
 
-    def make_order_from_dto(self, data, **kwargs) -> Order:
-        logger.debug(f"OrderService.create_order(data: {data}, kwargs: {kwargs})")
+    # TODO!!!!!!!!!!!!!!!!!!!
+    def model_to_entity(self, data, **kwargs) -> Order:
+        logger.debug(f"OrderService.model_to_entity(data: {data}, kwargs: {kwargs})")
         order_positions = data.pop("order_positions", [])
         customer_data = data.pop("customer", {})
         user_name = customer_data.get("username")

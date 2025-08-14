@@ -28,7 +28,7 @@ custom user model. It is designed to be subclassed by users who wish to implemen
 retaining some of the core functionality of the built-in Django User model.
 By inheriting from AbstractUser, the Customer model class is able to inherit the fields and methods 
 of the AbstractUser class, which includes built-in user authentication and authorization features, 
-such as the ability to log in, log out, and set a password. 
+such as the ability to log in, log out, and set a password.
 This allows developers to easily customize the user model to fit their specific needs while still retaining 
 the core functionality of the built-in user model.
 """

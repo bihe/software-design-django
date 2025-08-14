@@ -5,18 +5,45 @@ from django.views.decorators.csrf import csrf_exempt
 
 from core.models import Product
 from core.services import IOrderService
-from orders.dtos import OrderDTO
+from orders.services import OrderModel
+
+SESSION_ORDER = "sess.order"
+SESSION_PRODUCTLIST = "product_list"
+
+
+def set_order_session(request: HttpRequest, order: OrderModel):
+    request.session[SESSION_ORDER] = OrderModel().dump(order)
+
+
+def get_order_session(request: HttpRequest) -> OrderModel:
+    return request.session.get(SESSION_ORDER)
+
+
+def del_order_session(request: HttpRequest):
+    request.session.delete(SESSION_ORDER)
+
+
+def set_productlist_session(request: HttpRequest, order: OrderModel):
+    request.session[SESSION_PRODUCTLIST] = OrderModel().dump(order)
+
+
+def get_productlist_session(request: HttpRequest) -> OrderModel:
+    return request.session.get(SESSION_ORDER)
+
+
+def del_productlist_session(request: HttpRequest):
+    request.session.delete(SESSION_PRODUCTLIST)
 
 
 @inject
 def basket_overview(request: HttpRequest, order_service: IOrderService = Provide["order_service"]) -> HttpResponse:
     product_list = request.session.get("product_list", [])
 
-    order_dto: OrderDTO = order_service.get_order_dto(request.user, product_list)
+    order_model: OrderModel = order_service.get_order_model(request.user, product_list)
 
-    request.session["order"] = OrderDTO().dump(order_dto)
+    set_order_session(request, OrderModel().dump(order_model))
     context = {
-        "order": order_dto,
+        "order": order_model,
     }
     return render(request, "orders/basket_overview.html", context)
 
@@ -48,6 +75,7 @@ def add_to_basket(
 
         # Update the session with the modified product list
         request.session["product_list"] = product_list
+
         """
         The request.META.get('HTTP_REFERER') value represents the URL of the previous page the user visited.
         By passing it as the argument to redirect(), you can redirect the user back to that page.
@@ -61,12 +89,12 @@ def add_to_basket(
 
 @inject
 def place_order(request: HttpRequest, order_service: IOrderService = Provide["order_service"]) -> HttpResponse:
-    order_id = order_service.create_order(request.session.get("order"))
+    order_id = order_service.create_order(get_order_session(request))
     if order_id is None:
         return HttpResponseBadRequest("Could not create order")
     else:
-        del request.session["product_list"]
-        del request.session["order"]
+        del_productlist_session(request)
+        del_order_session(request)
         return HttpResponse("Order created with id: " + str(order_id))
 
 
@@ -74,6 +102,6 @@ def clear_basket(request: HttpRequest) -> HttpResponse:
     """
     the basket is cleared by removing entries from the session
     """
-    del request.session["product_list"]
-    del request.session["order"]
+    del_productlist_session(request)
+    del_order_session(request)
     return redirect("orders:basket_overview")

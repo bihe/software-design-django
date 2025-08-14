@@ -20,7 +20,7 @@ class CustomerServiceConcurrencyTestCase(TransactionTestCase):
 
     def _redeem_credit_concurrently(self, amount, success_counter, exception_counter):
         try:
-            result = self.customer_service.redeem_credit(self.customer, amount)
+            self.customer_service.redeem_credit(self.customer, amount)
             success_counter.increment()
         except Exception:
             exception_counter.increment()
@@ -38,8 +38,9 @@ class CustomerServiceConcurrencyTestCase(TransactionTestCase):
         # Create and start the concurrent threads
         threads = []
         for _ in range(num_threads):
-            thread = threading.Thread(target=self._redeem_credit_concurrently,
-                                      args=(redeem_value, success_counter, exception_counter))
+            thread = threading.Thread(
+                target=self._redeem_credit_concurrently, args=(redeem_value, success_counter, exception_counter)
+            )
             threads.append(thread)
             thread.start()
 
@@ -48,10 +49,12 @@ class CustomerServiceConcurrencyTestCase(TransactionTestCase):
             thread.join()
 
         # Assert that the credit redemption is correct after concurrent attempts
-        expected_credit = 100 - (success_counter.value*redeem_value)
+        expected_credit = 100 - (success_counter.value * redeem_value)
         expected_exceptions = num_threads - success_counter.value
-        print(f"number of exceptions: {str(exception_counter.value)} and number of successes: "
-              f"{str(success_counter.value)} with expected credit: {str(expected_credit)}")
+        print(
+            f"number of exceptions: {str(exception_counter.value)} and number of successes: "
+            f"{str(success_counter.value)} with expected credit: {str(expected_credit)}"
+        )
 
         # we must reload the customer from the database, because self.customer is not updated
         # (yet another django ORM flaw)

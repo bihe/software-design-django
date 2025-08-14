@@ -20,10 +20,6 @@ class IProductService(ABC):
         pass
 
     @abstractmethod
-    def get_price(self, product: Product) -> float:
-        pass
-
-    @abstractmethod
     def get_by_id(self, id: int) -> models.QuerySet:
         pass
 

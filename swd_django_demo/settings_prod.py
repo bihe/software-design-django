@@ -198,8 +198,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # change default user model to our own
 AUTH_USER_MODEL = "customers.Customer"
 
-# Set the model to use for products
-PRODUCT_MODEL = "products.ProductBase"
-
 # Set the model to use for customers
 CUSTOMER_MODEL = "customers.CustomerBase"
