@@ -10,17 +10,10 @@ from core.models import Customer
 """
 
 
-class CustomerBase(Customer):
-    class Meta:
-        # swappable is used to swap out the default user model with our custom user model
-        swappable: str = "CUSTOMER_MODEL"
-        db_table: str = "customer_base"
-
-
 # this is the concrete model that we will use for the project
-class Customer(CustomerBase):
+class Customer(Customer):
     class Meta:
-        db_table: str = "customer_concrete"
+        db_table: str = "customer"
 
     # we are adding a credit field to the customer model
     credit: float = models.FloatField(null=True)

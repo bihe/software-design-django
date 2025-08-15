@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import Optional
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 from django.db import transaction
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields
 
 from core.serializers import CustomerSerializer, ProductSerializer
 from orders.models import Order, OrderPosition
@@ -14,7 +14,7 @@ Please note, that we are only importing the interfaces from the core module and 
 So this module can be used with any concrete product module implementation.
 """
 from core.models import Customer, Product
-from core.services import IOrderService
+from core.services import ICustomerService, IProductService
 
 # Parallel class representing the Order/OrderPosition entity called *Models. This is a quite common pattern
 # to tranfere data between the service and the views. Those objects are called View-Models
@@ -42,39 +42,21 @@ class OrderPositionModel(Schema):
     price: fields.Float = fields.Float()
 
 
-class OrderService(IOrderService):
-    """
-    A class that implements IOrderService interface to handle order related business logic.
-    """
-
-    def __init__(self, product_service: Provide("product_service"), customer_service: Provide("customer_service")):
+class OrderService:
+    def __init__(
+        self,
+        product_service: IProductService = Provide("product_service"),
+        customer_service: ICustomerService = Provide("customer_service"),
+    ):
         logger.debug(f"OrderService.__init__(product_service: {product_service}, customer_service: {customer_service}")
-        """
-        Constructor method to initialize OrderService class.
-        Args:
-            product_service (Provide["product_service"]): An injected dependency to access the ProductService class.
-                Provide("product_service") is a special constant value provided by the dependency_injector library that
-                can be used as a placeholder when injecting dependencies.
-                It indicates that the value for the argument should be provided by the dependency injection
-                framework at runtime, rather than being explicitly passed in at the time of object creation.
-        """
         self.product_service = product_service
         self.customer_service = customer_service
 
-    def get_all_products(self) -> List[Product]:
-        logger.debug("OrderService.get_all_products()")
-        return self.product_service.get_all_products()
-
-    def get_product(self, product_id: int) -> Product:
-        logger.debug(f"OrderService.get_product(product_id : {product_id})")
-        return self.product_service.get_by_id(product_id)
-
     def get_order_model(self, customer: Customer, product_list: list[Product]) -> OrderModel:
-        logger.debug(f"OrderService.get_order_dto(customer: {customer}, product_list: {product_list})")
         order: OrderModel = OrderModel()
         order.customer = CustomerSerializer().dump(customer)
-        order_positions: [] = []  # List to store the order positions
-        product_pos_map: {} = {}  # Map to store the product id and position in the order
+        order_positions: list[OrderPosition] = []  # List to store the order positions
+        product_pos_map: dict[int, Product] = {}  # Map to store the product id and position in the order
         pos: int = 0
         total_price: float = 0.0
         for product_id in product_list:
@@ -93,7 +75,6 @@ class OrderService(IOrderService):
                 orderpos.pos = pos
                 orderpos.product = product_serialized
                 orderpos.quantity = 1
-                # we need to get the price from the product service, because the abstract product does not have price
                 orderpos.price = self.product_service.get_price(product)
                 total_price += orderpos.price
                 order_positions.append(orderpos)  # Add the order position to the list
@@ -103,42 +84,69 @@ class OrderService(IOrderService):
 
         return order
 
-    def create_order(self, order_dto: OrderModel) -> Optional[int]:
-        logger.debug(f"OrderService.create_order(order_dto: {order_dto})")
-        # loading the order_dto into the Order model already saves the order and order positions to the database
-        # in case of an error, the transaction will be rolled back, so we use the atomic decorator
-        # putting everything into an atomic transaction also give us the possibility to handle multiuser concurrency
-        # have a look at the customer_service.redeem_credit method to see how this is done
+    def create_order(self, order: OrderModel) -> Optional[int]:
+        logger.debug(f"OrderService.create_order(order: {order})")
         try:
             with transaction.atomic():
-                # this will call the make_order_from_dto method below,
-                # see dtos.py where special conversion method is defined with @post_load()
-                order: Order = OrderModel().load(order_dto)
-                return order.id
+                order_positions = order.order_positions
+                customer_data = order.customer
+                user_name = customer_data.get("username")
+                customer = self.customer_service.get_by_username(user_name)
+
+                order_to_save = Order()
+                order_to_save.user = customer
+                order_to_save.total_price = order.total_price
+                order_to_save.save()
+
+                for order_position in order_positions:
+                    p: OrderPositionModel = order_position
+                    product_id = p.product["id"]
+                    product = self.product_service.get_by_id(product_id)
+
+                    order_position_to_save = OrderPosition()
+                    order_position_to_save.order = order_to_save
+                    order_position_to_save.pos = p.pos
+                    order_position_to_save.product = product
+                    order_position_to_save.quantity = p.quantity
+                    order_position_to_save.price = p.price
+
+                    order_position_to_save.save()
+
+                return order_to_save.id
         except Exception as e:
             print(e)
             return None
 
-    # TODO!!!!!!!!!!!!!!!!!!!
-    def model_to_entity(self, data, **kwargs) -> Order:
-        logger.debug(f"OrderService.model_to_entity(data: {data}, kwargs: {kwargs})")
-        order_positions = data.pop("order_positions", [])
-        customer_data = data.pop("customer", {})
-        user_name = customer_data.get("username")
-        customer = self.customer_service.get_by_username(user_name)
+    def get_order(self, order_id: int) -> OrderModel:
+        try:
+            entity = Order.objects.get(id=order_id)
+            order_model = self._entity_to_model(entity)
+            return order_model
+        except Order.DoesNotExist:
+            return None
 
-        # check if the customer has enough credit
-        total_price = sum(position["price"] * position["quantity"] for position in order_positions)
-        if not self.customer_service.redeem_credit(customer, total_price):
-            raise Exception("Not enough credit")
+    def get_orders(self, username: str) -> list[OrderModel]:
+        try:
+            orders = Order.objects.filter(user__username=username)
+            order_list: list[OrderModel] = []
+            for entity in orders:
+                order_model = self._entity_to_model(entity)
+                order_list.append(order_model)
+            return order_list
+        except Order.DoesNotExist:
+            return None
 
-        order = Order(user=customer, **data)
-        order.save()
-        for order_position in order_positions:
-            product_id = order_position.pop("product", {}).get("id")
-            product = self.product_service.get_by_id(product_id)
-            order_position = OrderPosition(**order_position, product=product)
-            order_position.order = order
-            order_position.save()
-
-        return order
+    def _entity_to_model(self, entity: Order) -> OrderModel:
+        order_model = OrderModel()
+        order_model.order_number = entity.id
+        order_model.total_price = entity.total_price
+        order_model.customer = entity.user
+        order_model.order_positions = []
+        for p in entity.order_positions.all():
+            order_position = OrderPositionModel()
+            order_position.pos = p.pos
+            order_position.quantity = p.quantity
+            order_position.price = p.price
+            order_position.product = p.product
+            order_model.order_positions.append(order_position)
+        return order_model

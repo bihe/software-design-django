@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Order{% endblock %}
+
+{% block content %}
+<div class="container">
+
+{% if user.is_authenticated %}
+
+    <h2>Order #{{order.order_number}}</h2>
+
+
+    <ul>
+        <li><strong>Order-Number</strong>: {{order.order_number}}</li>
+        <li><strong>Total-Price</strong>: &euro; {{order.total_price}}</li>
+        <li><strong>Customer</strong>: {{order.customer.username}}</li>
+    </ul>
+
+
+    <h3>Order Positions</h3>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Order Position</th>
+                <th scope="col">Product ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+             {% for position in order.order_positions %}
+                <tr>
+                    <td>{{ position.pos }}</td>
+                    <td>{{ position.product.id }}</td>
+                    <td>{{ position.product.name }}</td>
+                    <td>{{ position.product.description }}</td>
+                    <td>{{ position.quantity }}</td>
+                    <td>{{ position.price }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% else %}
+    <p>Please <a href="{% url 'admin:login' %}?next={% url 'orders:basket_overview' %}">log in</a> to place an order.</p>
+{% endif %}
+
+</div>
+
+{% endblock %}

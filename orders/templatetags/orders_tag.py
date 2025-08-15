@@ -1,6 +1,7 @@
 from django import template
 
 from core.models import Product
+from orders.views import get_productlist_session
 
 register = template.Library()
 
@@ -16,6 +17,6 @@ def button_add_to_basket(product: Product):
 @register.inclusion_tag("orders/tags/basket_link.html", takes_context=True)
 def show_basket_Link(context):
     request = context["request"]
-    product_list = request.session.get("product_list", [])
+    product_list = get_productlist_session(request)
     basket_count = len(product_list)
     return {"basket_count": basket_count}

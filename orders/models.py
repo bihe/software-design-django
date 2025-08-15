@@ -1,7 +1,7 @@
 from django.db import models
 
+from customers.models import Customer
 from orders.managers import OrderManager
-from orders.settings import CUSTOMER_MODEL
 from products.models import Product
 
 
@@ -12,7 +12,7 @@ class Order(models.Model):
     objects: OrderManager = OrderManager()
     # The user field is a foreign key to the customer who made the order
     user: models.ForeignKey = models.ForeignKey(
-        to=CUSTOMER_MODEL,
+        to=Customer,
         on_delete=models.PROTECT,
     )
     total_price: models.FloatField = models.FloatField()
