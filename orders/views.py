@@ -1,4 +1,5 @@
 from dependency_injector.wiring import Provide, inject
+from django.contrib import messages
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
@@ -6,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from core.models import Product
 from core.services import IProductService
 from orders.services import OrderModel, OrderService
+
+from .logging import logger
 
 SESSION_PRODUCTLIST = "product_list"
 
@@ -102,21 +105,23 @@ def add_to_basket(
 
 @inject
 def place_order(request: HttpRequest, order_service: OrderService = Provide["order_service"]) -> HttpResponse:
-    order_model: OrderModel = get_order_model(request, order_service)
-    if order_model is None:
-        return HttpResponseBadRequest("No order-model available")
+    try:
+        order_model: OrderModel = get_order_model(request, order_service)
+        if order_model is None:
+            return HttpResponseBadRequest("No order-model available")
 
-    order_id = order_service.create_order(order_model)
-    if order_id is None:
-        return HttpResponseBadRequest("Could not create order")
+        order_id = order_service.create_order(order_model)
+        if order_id is None:
+            return HttpResponseBadRequest("Could not create order")
 
-    order = order_service.get_order(order_id)
-    context = {
-        "order": order,
-    }
+        del_productlist_session(request)
+        return redirect("orders:order_detail", order_id)
 
-    del_productlist_session(request)
-    return render(request, "orders/order.html", context)
+    except Exception as e:
+        logger.error(f"could not create order: {e}")
+        messages.error(request, str(e))
+
+    return redirect("orders:basket_overview")
 
 
 def clear_basket(request: HttpRequest) -> HttpResponse:

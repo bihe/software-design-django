@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}Customers{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+    {% if user.is_authenticated %}
+
+    <h3>User-profile for: <span class="badge text-bg-info">{{user}}</span></h3>
+
+    <ul>
+        <li><strong>Username</strong>: {{ user.username }}</li>
+        <li><strong>Display-Name</strong>: {{ user.get_full_name }}</li>
+        <li><strong>Email</strong>: {{ user.email }}</li>
+        <li><strong>Current Credit</strong>: &euro; {{ user.credit }}</li>
+    </ul>
+
+    <a class="btn btn-primary" href="{% url 'customers:customer-update' user.pk %}"><i class="bi bi-pencil-square"></i> Edit</a>
+
+    {% else %}
+
+    <div class="alert alert-danger" role="alert">
+    You need to be loged-in to access the view!
+    </div>
+
+    {% endif %}
+    
+</div>
+{% endblock %}

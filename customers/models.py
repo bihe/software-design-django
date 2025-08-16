@@ -1,5 +1,6 @@
 # Create your models here.
 from django.db import models
+from django.urls import reverse
 
 from core.models import Customer
 
@@ -17,3 +18,8 @@ class Customer(Customer):
 
     # we are adding a credit field to the customer model
     credit: float = models.FloatField(null=True)
+
+    # this is needed for Django Model-forms:
+    # https://docs.djangoproject.com/en/5.2/topics/class-based-views/generic-editing/
+    def get_absolute_url(self):
+        return reverse("customers:customer-detail", kwargs={"pk": self.pk})

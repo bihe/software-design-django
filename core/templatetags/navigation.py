@@ -20,9 +20,14 @@ class Database(Enum):
 
 
 @register.inclusion_tag("core/tags/navigation.html", takes_context=True)
-def navigation_header(context, user: User):
+def navigation_header(context, user: User, current_path: str, basket_count: int):
     # request = context["request"]
-    return {"user": user, "dbtype": str(determine_database_type())}
+    return {
+        "user": user,
+        "dbtype": str(determine_database_type()),
+        "basket_count": basket_count,
+        "current_path": current_path,
+    }
 
 
 def determine_database_type() -> Database:

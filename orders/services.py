@@ -86,36 +86,47 @@ class OrderService:
 
     def create_order(self, order: OrderModel) -> Optional[int]:
         logger.debug(f"OrderService.create_order(order: {order})")
-        try:
-            with transaction.atomic():
-                order_positions = order.order_positions
-                customer_data = order.customer
-                user_name = customer_data.get("username")
-                customer = self.customer_service.get_by_username(user_name)
 
-                order_to_save = Order()
-                order_to_save.user = customer
-                order_to_save.total_price = order.total_price
-                order_to_save.save()
+        with transaction.atomic():
+            order_positions = order.order_positions
+            customer_data = order.customer
+            user_name = customer_data.get("username")
+            customer = self.customer_service.get_by_username(user_name)
 
-                for order_position in order_positions:
-                    p: OrderPositionModel = order_position
-                    product_id = p.product["id"]
-                    product = self.product_service.get_by_id(product_id)
+            # we need a customer to carry on
+            if customer is None:
+                raise Exception(f"cannot create order without customer, no customer for username '{user_name}'")
 
-                    order_position_to_save = OrderPosition()
-                    order_position_to_save.order = order_to_save
-                    order_position_to_save.pos = p.pos
-                    order_position_to_save.product = product
-                    order_position_to_save.quantity = p.quantity
-                    order_position_to_save.price = p.price
+            # do a check on the customer credit
+            # if the customer can afford the order
+            if customer.credit < order.total_price:
+                raise Exception(
+                    (
+                        f"cannot perform order without enough credit, total order price of [{order.total_price}] "
+                        f"is higher than credit of [{customer.credit}]"
+                    )
+                )
 
-                    order_position_to_save.save()
+            order_to_save = Order()
+            order_to_save.user = customer
+            order_to_save.total_price = order.total_price
+            order_to_save.save()
 
-                return order_to_save.id
-        except Exception as e:
-            print(e)
-            return None
+            for order_position in order_positions:
+                p: OrderPositionModel = order_position
+                product_id = p.product["id"]
+                product = self.product_service.get_by_id(product_id)
+
+                order_position_to_save = OrderPosition()
+                order_position_to_save.order = order_to_save
+                order_position_to_save.pos = p.pos
+                order_position_to_save.product = product
+                order_position_to_save.quantity = p.quantity
+                order_position_to_save.price = p.price
+
+                order_position_to_save.save()
+
+            return order_to_save.id
 
     def get_order(self, order_id: int) -> OrderModel:
         try:

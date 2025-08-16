@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}Customers{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+    {% if user.is_authenticated %}
+
+    <h3>Update profile values of <span class="badge text-bg-info">{{user}}</span></h3>
+  
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-success" type="submit" value="Send message"><i class="bi bi-save"></i> Save</button>
+    </form>
+
+    {% else %}
+
+    <div class="alert alert-danger" role="alert">
+    You need to be loged-in to access the view!
+    </div>
+
+    {% endif %}
+    
+</div>
+{% endblock %}

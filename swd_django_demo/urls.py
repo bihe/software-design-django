@@ -28,6 +28,8 @@ urlpatterns = [
     path("orders/", include("orders.urls")),
     # Map the "products/" URL to the "products" application's URLs
     path("products/", include("products.urls")),
+    # Map the "customers/" URL to the "customers" application's URLs
+    path("customers/", include("customers.urls")),
     # Map the "admin/" URL to the Django admin site
     path("admin/", admin.site.urls),
 ]

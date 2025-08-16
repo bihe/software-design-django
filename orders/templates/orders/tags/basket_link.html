@@ -1,7 +1,11 @@
 <div class="basket-count">
-    <span class="badge bg-primary">{{ basket_count }}</span>
-    <a href="{% url 'orders:basket_overview' %}" class="basket-link">
-        <span class="basket-text">Product(s) in Basket</span>
+    <a href="{% url 'orders:basket_overview' %}" class="basket-link position-relative">
+        <i class="bi bi-basket">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger basket-count-badge">
+                {{ basket_count }}
+                <span class="visually-hidden">basket items</span>
+            </span>
+        </i>
     </a>
 </div>
 <br>

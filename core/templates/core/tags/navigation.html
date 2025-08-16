@@ -2,20 +2,38 @@
  
  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom:20px">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i class="bi bi-database"></i> SWD-Lab Example</a>
+        <a class="navbar-brand" href="/"><i class="bi bi-database"></i> SWD-Lab Example</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbar">
+
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{% url 'products:index' %}">Products</a>
+                <a class="nav-link {% if current_path == 'products'%} active {% endif %}" aria-current="page" href="{% url 'products:index' %}"><i class="bi bi-box"></i> Products</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="{% url 'orders:order_overview' %}">Orders</a>
+                <a class="nav-link {% if current_path == 'orders'%} active {% endif %}" aria-current="page" href="{% url 'orders:order_overview' %}"><i class="bi bi-bag-check"></i> Orders</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {% if current_path == 'customers'%} active {% endif %}" aria-current="page" href="{% url 'customers:customer-detail' user.pk %}"><i class="bi bi-person-bounding-box"></i> User-Profile</a>
             </li>
         </ul>
+
+        <div class="basket-count">
+            <a href="{% url 'orders:basket_overview' %}" class="basket-link position-relative">
+                <i class="bi bi-basket basket-count-icon">
+                    {% if basket_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger basket-count-badge">
+                        {{ basket_count }}
+                        <span class="visually-hidden">basket items</span>
+                    </span>
+                    {% endif %}
+                </i>
+            </a>
+        </div>
 
         <div class="dropdown">
             {% if user.is_authenticated %}

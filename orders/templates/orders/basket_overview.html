@@ -7,7 +7,19 @@
 
     <h2>Basket Overview</h2>
 
-   <table class="table table-hover table-bordered">
+    {% if messages %}
+    
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <ul class="messages" style="margin:0px">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% endif %}
+
+    <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th scope="col">Order Position</th>

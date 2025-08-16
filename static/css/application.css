@@ -1,0 +1,15 @@
+.basket-count {
+    font-size: x-large;
+    margin-right: 20px;
+    position: relative;
+    top: 3px;
+}
+
+.basket-count-icon {
+    color: white;
+}
+
+.basket-count-badge {
+    font-size: small;
+    
+}

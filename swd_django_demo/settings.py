@@ -85,6 +85,8 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.static",
+                "core.context_processor.url_path",
+                "orders.context_processor.order_basket_count",
             ],
             "libraries": {
                 "core_tags": "core.templatetags.navigation",

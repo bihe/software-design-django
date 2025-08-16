@@ -1,3 +1,3 @@
 import logging
 
-logger = logging.getLogger(__name__.split('.')[0])
+logger = logging.getLogger(__name__.split(".")[0])
