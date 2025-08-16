@@ -16,10 +16,11 @@
             <li class="nav-item">
                 <a class="nav-link {% if current_path == 'orders'%} active {% endif %}" aria-current="page" href="{% url 'orders:order_overview' %}"><i class="bi bi-bag-check"></i> Orders</a>
             </li>
-
+            {% if user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link {% if current_path == 'customers'%} active {% endif %}" aria-current="page" href="{% url 'customers:customer-detail' user.pk %}"><i class="bi bi-person-bounding-box"></i> User-Profile</a>
             </li>
+            {% endif %}
         </ul>
 
         <div class="basket-count">

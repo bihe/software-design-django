@@ -14,4 +14,4 @@ class CustomerUpdateView(UpdateView):
 
 class CustomerProfileView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, "index.html")
+        return render(request, "customers/index.html")
