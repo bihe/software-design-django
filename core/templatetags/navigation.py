@@ -35,7 +35,7 @@ def determine_database_type() -> Database:
     engine = settings.DATABASES["default"]["ENGINE"]
     if "sqlite" in engine:
         db_type = Database.SQLITE
-    elif "mariadb" in engine:
+    elif "mariadb" in engine or "mysql" in engine:
         db_type = Database.MARIADB
 
     return db_type

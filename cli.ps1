@@ -9,12 +9,13 @@ USAGE
 COMMANDS
     migrate             📜 Executing database migrations...
     test                🧪 Executing unit-tests...
-    runserver           🚀 Starting Django development server..
+    runserver           🚀 Starting Django development server...
+    compose             🚀 Starting containers with docker compose...
     help, -?            show this help message
 #>
 param(
   [Parameter(Position=0)]
-  [ValidateSet("migrate", "test", "runserver", "help")]
+  [ValidateSet("migrate", "test", "runserver", "compose", "help")]
   [string]$Command
 )
 
@@ -35,6 +36,16 @@ function Command-runserver {
     uv run python manage.py runserver
 }
 
+function Command-compose {
+    Write-Host -ForegroundColor Green "🚀 Prepare static files for serving..."
+    If (Test-Path ./static_dir) { Remove-Item -force -recurse ./static_dir }
+    
+    python manage.py collectstatic -c
+
+    Write-Host -ForegroundColor Green "🚀 Starting containers with docker compose..."
+    docker compose -f ./containers/compose.yaml rm && docker compose -f ./containers/compose.yaml up --build
+}
+
 
 if (!$Command) {
     Command-Help
@@ -45,5 +56,6 @@ switch ($Command) {
     "migrate" { Command-migrate }
     "test" { Command-test }
     "runserver" { Command-runserver }
+    "compose" { Command-compose }
     "help"  { Command-Help }
 }

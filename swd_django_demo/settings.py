@@ -200,6 +200,9 @@ STATICFILES_DIRS = [
     # "/var/www/static/",
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static_dir")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_dir")
+
 # we are going to reuse the existing admin login page also for users
 LOGIN_URL = "/admin/login/"
 

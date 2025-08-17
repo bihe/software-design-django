@@ -7,3 +7,4 @@ env/
 .pcy
 .DS_Store
 *.log
+static_dir/

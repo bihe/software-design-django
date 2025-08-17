@@ -19,5 +19,6 @@ dev = [
 ]
 prod = [
     "gunicorn>=23.0.0",
+    "mysqlclient>=2.2.7",
 ]
 
