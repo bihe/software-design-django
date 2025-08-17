@@ -99,7 +99,7 @@ class OrderService:
 
             # do a check on the customer credit
             # if the customer can afford the order
-            if customer.credit < order.total_price:
+            if not self.customer_service.redeem_credit(customer, order.total_price):
                 raise Exception(
                     (
                         f"cannot perform order without enough credit, total order price of [{order.total_price}] "
