@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A sample Django application used for the Software-Design Lab"
 readme = "README.md"
 requires-python = ">=3.13"
-authors = ["Bernhard Danninger <bernhard.danninger@fh-salzburg.ac.at>", "Henrik Binggl <hbinggl.lba@fh-salzburg.ac.at>"]
+authors = ["Bernhard Danninger", "Henrik Binggl"]
 dependencies = [
     "dependency-injector>=4.48.1",
     "django>=5.2.5",

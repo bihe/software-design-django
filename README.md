@@ -74,8 +74,8 @@ Or if you want to start with a fresh Django project from scratch:
 ### 2.2 IDE
 There are a number of IDEs available for python development. You can choose between different variants like [VSCode](https://code.visualstudio.com/), [PyCharm](https://www.jetbrains.com/pycharm/), [VIM](https://realpython.com/vim-and-python-a-match-made-in-heaven/), ...
 
-#### 2.2.1 Unittests & VSCode
-To enable Django-based unittest in VSCode, follow the documentation: https://code.visualstudio.com/docs/python/testing#_django-unit-tests
+#### 2.2.1 VSCode
+This repository uses VSCode mainly. It also provides recommendations for extensions which can be installed to have a good development experience (`.vscode/extensions.json`). Unit-testing works and is configured in `.vscode/settings.json` as well as launch/debug capabilities of the Django application in `.vscode/launch.json`.
 
 ### 2.3 Dependency Injection
 A very often used concept in software-design is **dependency injection** (or inversion of control). A very, very good intro-video regarding DI (dependency injection) can be found on *youtube*, ["Dependency Injection, The Best Pattern"](https://www.youtube.com/embed/J1f5b4vcxCQ?si=Qb4pFAWWazOvzPjm). 

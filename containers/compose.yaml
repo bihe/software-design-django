@@ -4,9 +4,10 @@ services:
   database:
     image: mariadb:lts
     restart: always
-    # would be better to have a local folder where the database files are persisted
-    #volumes:
-    #- ./database-data:/var/lib/mysql
+    volumes:
+      # https://hub.docker.com/_/mariadb @ Initializing the database contents
+      - "./initial_data.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./database-data:/var/lib/mysql"
     networks:
       - backend
     environment:
@@ -40,7 +41,9 @@ services:
         database:
           condition: service_healthy
 
-  # nginx is used to serve both the Django-app and static files      
+  # nginx is used to serve both the Django-app and static files
+  # only nginx exposes ports, `app` and `database` do not expose ports
+  # of the containers to the `outside` world
   nginx:
     build:
         context: ../
@@ -49,7 +52,7 @@ services:
     volumes:
       - ../static_dir:/home/app/web/staticfiles
     ports:
-      # expose the nginx port of 80 (default http) to 8000 (used by Django)
+      # expose the nginx port of 80 (default http) and map it to 8000 on localhost
       - 8000:80
     networks:
       - backend

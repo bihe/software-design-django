@@ -205,3 +205,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # change default user model to our own
 AUTH_USER_MODEL = "customers.Customer"
+
+# define the Dependency-Injection configuration for wiring
+# @see https://python-dependency-injector.ets-labs.org/wiring.html
+#   Wiring feature provides a way to inject container providers into the functions and methods.
+# the configuration tells the dependency injector to inject the configured services
+# in the moduels
+DI_CONTAINER_WIRE_MODULES = [
+    "orders.views",
+    "products.views",
+]

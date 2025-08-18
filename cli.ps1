@@ -43,7 +43,7 @@ function Command-compose {
     python manage.py collectstatic -c
 
     Write-Host -ForegroundColor Green "🚀 Starting containers with docker compose..."
-    docker compose -f ./containers/compose.yaml rm && docker compose -f ./containers/compose.yaml up --build
+    docker compose -f ./containers/compose.yaml rm && docker compose -f ./containers/compose.yaml up --build 
 }
 
 
