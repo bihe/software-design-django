@@ -5,6 +5,12 @@ description = "A sample Django application used for the Software-Design Lab"
 readme = "README.md"
 requires-python = ">=3.13"
 authors = ["Bernhard Danninger", "Henrik Binggl"]
+license = {file = "LICENSE"}
+keywords = ["python", "django", "demo", "software-design", "FH Salzburg"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python"
+]
 dependencies = [
     "dependency-injector>=4.48.1",
     "django>=5.2.5",
