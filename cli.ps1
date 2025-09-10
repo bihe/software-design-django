@@ -8,6 +8,7 @@ USAGE
 
 COMMANDS
     migrate             📜 Executing database migrations...
+    adminuser           🤖 Create a admin-user via django...
     test                🧪 Executing unit-tests...
     runserver           🚀 Starting Django development server...
     compose             🚀 Starting containers with docker compose...
@@ -15,7 +16,7 @@ COMMANDS
 #>
 param(
   [Parameter(Position=0)]
-  [ValidateSet("migrate", "test", "runserver", "compose", "help")]
+  [ValidateSet("migrate", "adminuser", "test", "runserver", "compose", "help")]
   [string]$Command
 )
 
@@ -24,6 +25,11 @@ function Command-Help { Get-Help $PSCommandPath }
 function Command-migrate {
     Write-Host -ForegroundColor Green "📜 Executing database migrations..."
     uv run python manage.py migrate
+}
+
+function Command-adminuser {
+    Write-Host -ForegroundColor Green "🤖 Create a admin-user via django..."
+    uv run python manage.py createsuperuser
 }
 
 function Command-test {
@@ -54,6 +60,7 @@ if (!$Command) {
 
 switch ($Command) {
     "migrate" { Command-migrate }
+    "adminuser" { Command-adminuser }
     "test" { Command-test }
     "runserver" { Command-runserver }
     "compose" { Command-compose }
