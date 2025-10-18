@@ -4,17 +4,15 @@ from dependency_injector.wiring import Provide
 from django.db import transaction
 from marshmallow import Schema, fields
 
-from core.serializers import CustomerSerializer, ProductSerializer
+from customers.models import Customer
+from customers.serializers import CustomerSerializer
+from customers.services import CustomerService
 from orders.models import Order, OrderPosition
+from products.models import Product
+from products.serializers import ProductSerializer
+from products.services import ProductService
 
 from .logging import logger
-
-"""
-Please note, that we are only importing the interfaces from the core module and not the concrete classes.
-So this module can be used with any concrete product module implementation.
-"""
-from core.models import Customer, Product
-from core.services import ICustomerService, IProductService
 
 # Parallel class representing the Order/OrderPosition entity called *Models. This is a quite common pattern
 # to tranfere data between the service and the views. Those objects are called View-Models
@@ -45,8 +43,8 @@ class OrderPositionModel(Schema):
 class OrderService:
     def __init__(
         self,
-        product_service: IProductService = Provide("product_service"),
-        customer_service: ICustomerService = Provide("customer_service"),
+        product_service: ProductService = Provide("product_service"),
+        customer_service: CustomerService = Provide("customer_service"),
     ):
         logger.debug(f"OrderService.__init__(product_service: {product_service}, customer_service: {customer_service}")
         self.product_service = product_service

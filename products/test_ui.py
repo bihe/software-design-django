@@ -4,8 +4,8 @@ from dependency_injector import containers, providers
 from django.test import TestCase
 from django.urls import reverse
 
-from core.models import Product
-from core.services import IProductService
+from .models import Product
+from .services import ProductService
 
 """
     This is a test container that we will be used to mock the dependencies,
@@ -16,7 +16,7 @@ from core.services import IProductService
 class TestContainer(containers.DeclarativeContainer):
     product_factory = providers.Factory(MagicMock, spec=Product)
 
-    product_service = providers.Singleton(MagicMock, spec=IProductService)
+    product_service = providers.Singleton(MagicMock, spec=ProductService)
 
 
 # This test class inherits from the TestCase class, which is provided by Django (not form unittest),

@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from core.serializers import CustomerSerializer, ProductSerializer
+from customers.serializers import CustomerSerializer
 from orders.services import OrderModel, OrderPositionModel, OrderService
+from products.serializers import ProductSerializer
 
 
 class TestOrderService(unittest.TestCase):

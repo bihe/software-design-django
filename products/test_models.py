@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from products.models import Product
+from .models import Product
 
 
 # This test class inherits from the TestCase class, which is provided by Django (not form unittest),

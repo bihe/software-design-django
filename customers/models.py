@@ -1,8 +1,7 @@
 # Create your models here.
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
-
-from core.models import Customer
 
 """
     we are using the Customer model for authentication, so we need to use the AbstractUser model
@@ -12,7 +11,7 @@ from core.models import Customer
 
 
 # this is the concrete model that we will use for the project
-class Customer(Customer):
+class Customer(AbstractUser):
     class Meta:
         db_table: str = "customer"
 

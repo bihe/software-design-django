@@ -2,10 +2,6 @@
 from marshmallow import Schema, fields
 
 
-class CustomerSerializer(Schema):
-    username: fields.Str = fields.Str()
-
-
 # Serializer for the Django product model
 class ProductSerializer(Schema):
     # Define the fields for the product model

@@ -2,7 +2,7 @@ from dependency_injector.wiring import Provide, inject
 from django.http import HttpRequest
 from django.shortcuts import render
 
-from core.services import IProductService
+from .services import ProductService
 
 
 @inject
@@ -10,7 +10,7 @@ def index(
     request: HttpRequest,
     # Provide is a special object used in dependency injection frameworks to specify that the required object
     # should be provided by the framework itself, rather than being instantiated by the code.
-    product_service: IProductService = Provide["product_service"],
+    product_service: ProductService = Provide["product_service"],
 ):
     # get all products from the product service
     # (note that we are not using a concrete product service, but an interface

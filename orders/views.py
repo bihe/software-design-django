@@ -4,9 +4,9 @@ from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadReque
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
-from core.models import Product
-from core.services import IProductService
 from orders.services import OrderModel, OrderService
+from products.models import Product
+from products.services import ProductService
 
 from .logging import logger
 
@@ -69,7 +69,7 @@ def order_detail(
 @inject
 def add_to_basket(
     request: HttpRequest,
-    product_service: IProductService = Provide["product_service"],
+    product_service: ProductService = Provide["product_service"],
 ) -> HttpResponse:
     if request.method == "POST":
         product_id = request.POST.get("product_id")

@@ -1,7 +1,7 @@
 from django import template
 
-from core.models import Product
 from orders.views import get_productlist_session
+from products.models import Product
 
 register = template.Library()
 

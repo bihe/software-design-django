@@ -1,11 +1,9 @@
 from typing import List
 
-from core.services import IProductService
-from products.models import Product
+from .models import Product
 
 
-# this is the concrete implementation of the IProductService
-class ProductService(IProductService):
+class ProductService:
 
     def get_all_products(self) -> List[Product]:
         products = []
