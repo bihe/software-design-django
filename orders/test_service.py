@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from customers.serializers import CustomerSerializer
+from customers.services import CustomerModel
 from orders.services import OrderModel, OrderPositionModel, OrderService
-from products.serializers import ProductSerializer
+from products.services import ProductModel
 
 
 class TestOrderService(unittest.TestCase):
@@ -20,29 +20,26 @@ class TestOrderService(unittest.TestCase):
         # create a real OrderService instance and provide the mock instances
         self.order_service = OrderService(product_service=self.product_service, customer_service=self.customer_service)
 
-        product_schema = ProductSerializer()
-        customer_schema = CustomerSerializer()
-
         # Sample data for order creation > OrderModel
         order_positions: list[OrderPositionModel] = []
         order_position1 = OrderPositionModel()
         order_position1.pos = 1
         order_position1.quantity = 2
         order_position1.price = 10
-        order_position1.product = product_schema.load({"id": "1", "name": "product1"})
+        order_position1.product = ProductModel(id=1, name="product1")
         order_positions.append(order_position1)
 
         order_position2 = OrderPositionModel()
         order_position2.pos = 2
         order_position2.quantity = 3
         order_position2.price = 15
-        order_position2.product = product_schema.load({"id": "2", "name": "product2"})
+        order_position2.product = ProductModel(id=2, name="product2")
         order_positions.append(order_position2)
 
         order_model = OrderModel()
         order_model.order_positions = order_positions
         order_model.total_price = 65.0
-        order_model.customer = customer_schema.load({"username": "testuser"})
+        order_model.customer = CustomerModel(username="testuser")
 
         self.data: OrderModel = order_model
 

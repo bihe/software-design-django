@@ -31,6 +31,7 @@ class Order(models.Model):
         on_delete=models.PROTECT,
     )
     total_price: models.FloatField = models.FloatField()
+    order_date: models.DateTimeField = models.DateTimeField(null=True)
 
 
 # The OrderPosition model represents a single product in an order
@@ -57,4 +58,5 @@ class OrderPosition(models.Model):
     # The quantity field is the number of units of the product being ordered
     quantity: models.IntegerField = models.IntegerField()
     # The price field is the price of the product being ordered
+    price: models.FloatField = models.FloatField()
     price: models.FloatField = models.FloatField()

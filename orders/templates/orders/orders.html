@@ -15,6 +15,7 @@
                 <th scope="col">Order-Number</th>
                 <th scope="col">Customer</th>
                 <th scope="col">Total price</th>
+                 <th scope="col">Order date</th>
                 <th scope="col">Details</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
                     <td>{{ order.order_number }}</td>
                     <td>{{ order.customer.username }}</td>
                     <td>{{ order.total_price}}</td>
+                    <td>{{ order.order_date|date:"d.m.Y H:i"  }}</td>
                     <td><a class="btn btn-secondary"  href="{% url 'orders:order_detail' order.order_number %}"><i class="bi bi-hash"></i> {{ order.order_number }}</td>
                 </tr>
             {% endfor %}

@@ -12,6 +12,7 @@
 
     <ul>
         <li><strong>Order-Number</strong>: {{order.order_number}}</li>
+        <li><strong>Order-Date</strong>: {{order.order_date|date:"d.m.Y H:i"}}</li>
         <li><strong>Total-Price</strong>: &euro; {{order.total_price}}</li>
         <li><strong>Customer</strong>: {{order.customer.username}}</li>
     </ul>

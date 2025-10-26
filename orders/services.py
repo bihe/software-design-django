@@ -1,18 +1,16 @@
+from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 
 from dependency_injector.wiring import Provide
 from django.db import transaction
-from marshmallow import Schema, fields
 
 from customers.models import Customer
-from customers.serializers import CustomerSerializer
-from customers.services import CustomerService
-from orders.models import Order, OrderPosition
-from products.models import Product
-from products.serializers import ProductSerializer
-from products.services import ProductService
+from customers.services import CustomerModel, CustomerService
+from products.services import ProductModel, ProductService
 
 from .logging import logger
+from .models import Order, OrderPosition
 
 # Parallel class representing the Order/OrderPosition entity called *Models. This is a quite common pattern
 # to tranfere data between the service and the views. Those objects are called View-Models
@@ -24,20 +22,24 @@ from .logging import logger
 # objects, ..) (limitations due to the Active Record pattern in Django ORM)
 
 
-class OrderModel(Schema):
-    # The as_string=True option is used to ensure that the id is serialized as a string to avoid integer overflow
-    order_number: fields.Integer = fields.Integer(as_string=True, attribute="id")
-    customer: fields.Nested = fields.Nested(CustomerSerializer)
-    order_positions: fields.Nested = fields.Nested("OrderPositionModel", many=True)
-    total_price: fields.Float = fields.Float()
+@dataclass
+class OrderPositionModel:
+    pos: int = 0
+    quantity: int = 0
+    price: float = 0.0
+    product: ProductModel = None
 
 
-# Parallel class representing the OrderPosition entity
-class OrderPositionModel(Schema):
-    pos: fields.Int = fields.Int()
-    product: fields.Nested = fields.Nested(ProductSerializer)
-    quantity: fields.Int = fields.Int()
-    price: fields.Float = fields.Float()
+@dataclass
+class OrderModel:
+    # customer: fields.Nested = fields.Nested(CustomerSerializer)
+
+    id: Optional[int] = None
+    order_number: str = ""
+    total_price: float = 0.0
+    order_positions: list[OrderPositionModel] = field(default_factory=list)
+    customer: CustomerModel = None
+    order_date: datetime.date = None
 
 
 class OrderService:
@@ -50,11 +52,11 @@ class OrderService:
         self.product_service = product_service
         self.customer_service = customer_service
 
-    def get_order_model(self, customer: Customer, product_list: list[Product]) -> OrderModel:
+    def get_order_model(self, customer: Customer, product_list: list[ProductModel]) -> OrderModel:
         order: OrderModel = OrderModel()
-        order.customer = CustomerSerializer().dump(customer)
-        order_positions: list[OrderPosition] = []  # List to store the order positions
-        product_pos_map: dict[int, Product] = {}  # Map to store the product id and position in the order
+        order.customer = customer
+        order_positions: list[OrderPositionModel] = []  # List to store the order positions
+        product_pos_map: dict[int, ProductModel] = {}  # Map to store the product id and position in the order
         pos: int = 0
         total_price: float = 0.0
         for product_id in product_list:
@@ -63,15 +65,14 @@ class OrderService:
                 orderpos.quantity += 1
                 total_price += self.product_service.get_price(self.product_service.get_by_id(product_id))
             else:
-                product: Product = self.product_service.get_by_id(product_id)
+                product: ProductModel = self.product_service.get_by_id(product_id)
                 if product is None:
                     continue
-                product_serialized = ProductSerializer().dump(product)
                 pos += 1
                 product_pos_map[product_id] = pos - 1
                 orderpos: OrderPositionModel = OrderPositionModel()
                 orderpos.pos = pos
-                orderpos.product = product_serialized
+                orderpos.product = product
                 orderpos.quantity = 1
                 orderpos.price = self.product_service.get_price(product)
                 total_price += orderpos.price
@@ -87,13 +88,13 @@ class OrderService:
 
         with transaction.atomic():
             order_positions = order.order_positions
-            customer_data = order.customer
-            user_name = customer_data.get("username")
-            customer = self.customer_service.get_by_username(user_name)
+            customer = self.customer_service.get_by_username(order.customer.username)
 
             # we need a customer to carry on
             if customer is None:
-                raise Exception(f"cannot create order without customer, no customer for username '{user_name}'")
+                raise Exception(
+                    f"cannot create order without customer, no customer for username '{order.customer.username}'"
+                )
 
             # do a check on the customer credit
             # if the customer can afford the order
@@ -106,19 +107,22 @@ class OrderService:
                 )
 
             order_to_save = Order()
-            order_to_save.user = customer
+            customer_entity = self.customer_service.model_to_entity(customer)
+            order_to_save.user = customer_entity
             order_to_save.total_price = order.total_price
+            order_to_save.order_date = datetime.now()
             order_to_save.save()
 
             for order_position in order_positions:
                 p: OrderPositionModel = order_position
-                product_id = p.product["id"]
+                product_id = p.product.id
                 product = self.product_service.get_by_id(product_id)
 
                 order_position_to_save = OrderPosition()
                 order_position_to_save.order = order_to_save
                 order_position_to_save.pos = p.pos
-                order_position_to_save.product = product
+                product_entity = self.product_service.model_to_entity(product)
+                order_position_to_save.product = product_entity
                 order_position_to_save.quantity = p.quantity
                 order_position_to_save.price = p.price
 
@@ -136,7 +140,7 @@ class OrderService:
 
     def get_orders(self, username: str) -> list[OrderModel]:
         try:
-            orders = Order.objects.filter(user__username=username)
+            orders = Order.objects.filter(user__username=username).order_by("-id", "-order_date")
             order_list: list[OrderModel] = []
             for entity in orders:
                 order_model = self._entity_to_model(entity)
@@ -151,6 +155,7 @@ class OrderService:
         order_model.total_price = entity.total_price
         order_model.customer = entity.user
         order_model.order_positions = []
+        order_model.order_date = entity.order_date
         for p in entity.order_positions.all():
             order_position = OrderPositionModel()
             order_position.pos = p.pos
