@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from django.db import models, transaction
 
-from customers.models import Customer
+from .models import Customer
 
 
 @dataclass

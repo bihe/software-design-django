@@ -4,11 +4,11 @@ from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadReque
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
-from orders.services import OrderModel, OrderService
 from products.models import Product
 from products.services import ProductService
 
 from .logging import logger
+from .services import OrderModel, OrderService
 
 SESSION_PRODUCTLIST = "product_list"
 
@@ -25,7 +25,7 @@ def del_productlist_session(request: HttpRequest):
     del request.session[SESSION_PRODUCTLIST]
 
 
-def get_order_model(request: HttpRequest, order_service: OrderService) -> OrderModel:
+def _get_order_model(request: HttpRequest, order_service: OrderService) -> OrderModel:
     order: OrderModel = None
     product_list: list[int] = get_productlist_session(request)
     if len(product_list) > 0:
@@ -35,15 +35,21 @@ def get_order_model(request: HttpRequest, order_service: OrderService) -> OrderM
 
 @inject
 def basket_overview(request: HttpRequest, order_service: OrderService = Provide["order_service"]) -> HttpResponse:
+    """
+    display the current contents of the shopping basket
+    """
     context = {
         "order": {},
     }
-    context["order"] = get_order_model(request, order_service)
+    context["order"] = _get_order_model(request, order_service)
     return render(request, "orders/basket_overview.html", context)
 
 
 @inject
 def order_overview(request: HttpRequest, order_service: OrderService = Provide["order_service"]) -> HttpResponse:
+    """
+    display the available orders
+    """
     context = {
         "orders": [],
     }
@@ -55,6 +61,9 @@ def order_overview(request: HttpRequest, order_service: OrderService = Provide["
 def order_detail(
     request: HttpRequest, order_id: int, order_service: OrderService = Provide["order_service"]
 ) -> HttpResponse:
+    """
+    show a specific order by id
+    """
     context = {
         "orders": [],
     }
@@ -71,6 +80,9 @@ def add_to_basket(
     request: HttpRequest,
     product_service: ProductService = Provide["product_service"],
 ) -> HttpResponse:
+    """
+    add items to the basket
+    """
     if request.method == "POST":
         product_id = request.POST.get("product_id")
         if product_id is None:
@@ -105,8 +117,11 @@ def add_to_basket(
 
 @inject
 def place_order(request: HttpRequest, order_service: OrderService = Provide["order_service"]) -> HttpResponse:
+    """
+    create an order
+    """
     try:
-        order_model: OrderModel = get_order_model(request, order_service)
+        order_model: OrderModel = _get_order_model(request, order_service)
         if order_model is None:
             return HttpResponseBadRequest("No order-model available")
 
