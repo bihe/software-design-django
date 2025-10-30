@@ -81,5 +81,8 @@ This repository uses VSCode mainly. It also provides recommendations for extensi
 A very often used concept in software-design is **dependency injection** (or inversion of control). A very, very good intro-video regarding DI (dependency injection) can be found on *youtube*, ["Dependency Injection, The Best Pattern"](https://www.youtube.com/embed/J1f5b4vcxCQ?si=Qb4pFAWWazOvzPjm). 
 For `Django projects`initialization code is needed to work with the package [*dependency-injector*](https://pypi.org/project/dependency-injector/) --> https://python-dependency-injector.ets-labs.org/examples/django.html
 
+## 3. Software-Design
+The application implements a layerd design with models > services > views (sometimes call "Lasagne Architecture" when the layering goes too far 😅).
 
+![layered design](./django_lasagne_overview.svg)
 
