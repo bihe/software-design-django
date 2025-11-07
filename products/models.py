@@ -3,6 +3,10 @@ from typing import List, Optional
 from django.db import models
 
 
+# "A Manager is the interface through which database query operations are
+#  provided to Django models. At least one Manager exists for every model
+#  in a Django application."
+#  (https://docs.djangoproject.com/en/5.2/topics/db/managers/)
 class ProductManager(models.Manager):
     def get_by_id(self, id: int) -> Optional["Product"]:
         # Query for Product object by id

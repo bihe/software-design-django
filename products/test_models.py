@@ -10,7 +10,32 @@ class TestProduct(TestCase):
         pass
 
     def test_new_product_saved(self) -> None:
-        Product.objects.create(name="testproduct1", price=19.99, description="testdescription1")
+        p = Product.objects.create(name="testproduct1", price=19.99, description="testdescription1")
+        self.assertIsNotNone(p.id)
+        self.assertTrue(p.id > 0)
+
+        # create another product
+        product = Product(name="test1", description="testdescription", price=1.0)
+        product.save()
+
+        # a bit of 'magic' of the Active-Record pattern
+        # https://en.wikipedia.org/wiki/Active_record_pattern
+        self.assertIsNotNone(product.id)
+        self.assertTrue(product.id > 0)
+
+        # use the features of the "standard" django manager of entities
+        # https://docs.djangoproject.com/en/5.2/topics/db/queries/
+        all_products = Product.objects.all()
+        self.assertIsNotNone(all_products)
+        self.assertTrue(len(all_products) > 0)
+
+        p: Product = Product.objects.get(pk=product.id)
+        self.assertIsNotNone(p)
+        self.assertEqual("test1", p.name)
+
+        # we have created our own manager to provide "extension" methods on the
+        # active record object
+        # use the additional method of the manager implemenation
         self.assertEqual(Product.objects.get_by_name("testproduct1").exists(), True)
 
     def test_get_products_in_price_range(self) -> None:
