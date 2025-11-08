@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Optional
 
 from django.db import models
@@ -35,6 +36,7 @@ class Product(models.Model):
     name: str = models.CharField(max_length=200)
     description: str = models.TextField()
     price: float = models.FloatField()
+    created_at: datetime.datetime = models.DateTimeField(default=datetime.datetime.now)
 
     def __str__(self) -> str:
         return self.name

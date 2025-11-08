@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import TestCase
 
 from .models import Product
@@ -10,12 +12,12 @@ class TestProduct(TestCase):
         pass
 
     def test_new_product_saved(self) -> None:
-        p = Product.objects.create(name="testproduct1", price=19.99, description="testdescription1")
+        p = Product.objects.create(name="testproduct1", price=19.99, description="testdescription1", created_at= datetime.datetime.now())
         self.assertIsNotNone(p.id)
         self.assertTrue(p.id > 0)
 
         # create another product
-        product = Product(name="test1", description="testdescription", price=1.0)
+        product = Product(name="test1", description="testdescription", price=1.0, created_at= datetime.datetime.now())
         product.save()
 
         # a bit of 'magic' of the Active-Record pattern
