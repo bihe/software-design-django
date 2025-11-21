@@ -58,9 +58,6 @@ class CustomerService:
         if customer_entity.credit is not None and customer_entity.credit >= amount:
             customer_entity.credit -= amount
             customer_entity.save()
-            # in many other ORMs we do not need to call save() explicitly, as the ORM will keep track of
-            # the changes and commit them to the database when the transaction is committed
-            # personal remark (bid): Django ORM is not the best ORM out there ...
             return True
         else:
             return False

@@ -1,9 +1,8 @@
 import unittest
-from unittest.mock import Mock, patch, MagicMock
-from typing import List
+from unittest.mock import Mock, patch
 
 from .models import Product
-from .services import ProductService, ProductModel
+from .services import ProductModel, ProductService
 
 
 class TestProductModel(unittest.TestCase):
@@ -31,12 +30,7 @@ class TestProductModel(unittest.TestCase):
     def test_to_product_creates_new_orm_instance(self):
         """Test conversion from ProductModel to new Django ORM Product."""
         # Arrange
-        product_model = ProductModel(
-            id=None,
-            name="Mouse",
-            description="Wireless mouse",
-            price=29.99
-        )
+        product_model = ProductModel(id=None, name="Mouse", description="Wireless mouse", price=29.99)
 
         # Act
         product_orm = product_model.to_product()
@@ -56,12 +50,7 @@ class TestProductModel(unittest.TestCase):
         existing_product.description = "Old Description"
         existing_product.price = 100.0
 
-        product_model = ProductModel(
-            id=5,
-            name="Updated Name",
-            description="Updated Description",
-            price=150.0
-        )
+        product_model = ProductModel(id=5, name="Updated Name", description="Updated Description", price=150.0)
 
         # Act
         updated_product = product_model.to_product(existing_product)
@@ -79,7 +68,7 @@ class TestProductService(unittest.TestCase):
         """Set up test fixtures."""
         self.service = ProductService()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_get_all_products_returns_list_of_product_models(self, mock_objects):
         """Test get_all_products returns list of ProductModel objects."""
         # Arrange
@@ -110,7 +99,7 @@ class TestProductService(unittest.TestCase):
         self.assertEqual(result[1].name, "Mouse")
         mock_objects.all.assert_called_once()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_get_all_products_returns_empty_list_when_no_products(self, mock_objects):
         """Test get_all_products returns empty list when no products exist."""
         # Arrange
@@ -124,7 +113,7 @@ class TestProductService(unittest.TestCase):
         self.assertEqual(len(result), 0)
         mock_objects.all.assert_called_once()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_get_by_id_returns_product_model_when_found(self, mock_objects):
         """Test get_by_id returns ProductModel when product exists."""
         # Arrange
@@ -147,7 +136,7 @@ class TestProductService(unittest.TestCase):
         self.assertEqual(result.price, 999.99)
         mock_objects.get.assert_called_once_with(id=1)
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_get_by_id_returns_none_when_not_found(self, mock_objects):
         """Test get_by_id returns None when product does not exist."""
         # Arrange
@@ -163,12 +152,7 @@ class TestProductService(unittest.TestCase):
     def test_get_price_returns_product_price(self):
         """Test get_price returns the price from ProductModel."""
         # Arrange
-        product_model = ProductModel(
-            id=1,
-            name="Laptop",
-            description="Gaming laptop",
-            price=999.99
-        )
+        product_model = ProductModel(id=1, name="Laptop", description="Gaming laptop", price=999.99)
 
         # Act
         result = self.service.get_price(product_model)
@@ -179,12 +163,7 @@ class TestProductService(unittest.TestCase):
     def test_get_price_returns_zero_for_product_with_zero_price(self):
         """Test get_price returns 0.0 for product with zero price."""
         # Arrange
-        product_model = ProductModel(
-            id=1,
-            name="Free Sample",
-            description="Free product",
-            price=0.0
-        )
+        product_model = ProductModel(id=1, name="Free Sample", description="Free product", price=0.0)
 
         # Act
         result = self.service.get_price(product_model)
@@ -192,16 +171,11 @@ class TestProductService(unittest.TestCase):
         # Assert
         self.assertEqual(result, 0.0)
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_create_product_saves_and_returns_product_model(self, mock_objects):
         """Test create_product saves to database and returns ProductModel with id."""
         # Arrange
-        product_model = ProductModel(
-            id=None,
-            name="Keyboard",
-            description="Mechanical keyboard",
-            price=149.99
-        )
+        product_model = ProductModel(id=None, name="Keyboard", description="Mechanical keyboard", price=149.99)
 
         mock_saved_product = Mock(spec=Product)
         mock_saved_product.id = 10
@@ -211,7 +185,7 @@ class TestProductService(unittest.TestCase):
         mock_saved_product.save = Mock()
 
         # Mock the to_product conversion
-        with patch.object(product_model, 'to_product', return_value=mock_saved_product):
+        with patch.object(product_model, "to_product", return_value=mock_saved_product):
             # Act
             result = self.service.create_product(product_model)
 
@@ -223,7 +197,7 @@ class TestProductService(unittest.TestCase):
         self.assertEqual(result.price, 149.99)
         mock_saved_product.save.assert_called_once()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_update_product_updates_existing_and_returns_product_model(self, mock_objects):
         """Test update_product updates existing product and returns ProductModel."""
         # Arrange
@@ -236,12 +210,7 @@ class TestProductService(unittest.TestCase):
 
         mock_objects.get.return_value = mock_existing_product
 
-        product_model = ProductModel(
-            id=5,
-            name="Updated Name",
-            description="Updated Description",
-            price=150.0
-        )
+        product_model = ProductModel(id=5, name="Updated Name", description="Updated Description", price=150.0)
 
         # Act
         result = self.service.update_product(5, product_model)
@@ -255,18 +224,13 @@ class TestProductService(unittest.TestCase):
         mock_objects.get.assert_called_once_with(id=5)
         mock_existing_product.save.assert_called_once()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_update_product_returns_none_when_not_found(self, mock_objects):
         """Test update_product returns None when product does not exist."""
         # Arrange
         mock_objects.get.side_effect = Product.DoesNotExist()
 
-        product_model = ProductModel(
-            id=999,
-            name="Updated Name",
-            description="Updated Description",
-            price=150.0
-        )
+        product_model = ProductModel(id=999, name="Updated Name", description="Updated Description", price=150.0)
 
         # Act
         result = self.service.update_product(999, product_model)
@@ -275,7 +239,7 @@ class TestProductService(unittest.TestCase):
         self.assertIsNone(result)
         mock_objects.get.assert_called_once_with(id=999)
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_delete_product_deletes_and_returns_true(self, mock_objects):
         """Test delete_product deletes product and returns True."""
         # Arrange
@@ -293,7 +257,7 @@ class TestProductService(unittest.TestCase):
         mock_objects.get.assert_called_once_with(id=5)
         mock_product.delete.assert_called_once()
 
-    @patch('products.services.Product.objects')
+    @patch("products.services.Product.objects")
     def test_delete_product_returns_false_when_not_found(self, mock_objects):
         """Test delete_product returns False when product does not exist."""
         # Arrange
@@ -307,5 +271,5 @@ class TestProductService(unittest.TestCase):
         mock_objects.get.assert_called_once_with(id=999)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
