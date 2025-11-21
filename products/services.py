@@ -6,6 +6,7 @@ from django.db import models
 from .models import Product
 
 
+# https://docs.python.org/3/library/dataclasses.html
 @dataclass
 class ProductModel:
     """The ProductService uses own models and converts the persistence models."""
