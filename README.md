@@ -49,7 +49,7 @@ Best practice for any python development is to start with a virtual environment.
 ### 2.1 Usage
 
 1. Install dependencies with the projects main directory: `uv sync`.
-2. Activate the virtual environment: `source .venv/bin/activate` / `./.venv/bin/activate.ps1`
+2. Activate the virtual environment: Mac/Linux `source .venv/bin/activate` / Windows (powershell) `./.venv/Scripts/activate.ps1`
 3. Create the database tables: `uv run python manage.py migrate`
 4. Create an admin user: `uv run python manage.py createsuperuser`
 5. Run unit tests: `uv run python manage.py test -v 2`
