@@ -26,6 +26,7 @@ class ProductManager(models.Manager):
 
 
 # this is the concrete model that we will use for the project
+# https://docs.djangoproject.com/en/5.2/topics/db/models/
 class Product(models.Model):
     objects: ProductManager = ProductManager()
 
