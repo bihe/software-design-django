@@ -59,4 +59,3 @@ class OrderPosition(models.Model):
     quantity: models.IntegerField = models.IntegerField()
     # The price field is the price of the product being ordered
     price: models.FloatField = models.FloatField()
-    price: models.FloatField = models.FloatField()
