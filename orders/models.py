@@ -19,6 +19,10 @@ class OrderManager(models.Manager):
             return qs.first()
         return None
 
+    # retrieve the list of positions of the given order
+    def get_order_positions(self, id: int) -> models.QuerySet:
+        return OrderPosition.objects.filter(order__id=id)
+
 
 # This file defines the models for our application
 # The Order model represents an order made by a customer
