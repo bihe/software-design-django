@@ -53,13 +53,14 @@ ENV PATH="/opt/django-app/.venv/bin:$PATH"
 RUN apt-get update && apt-get install -y default-libmysqlclient-dev curl
 
 # the path in the container where the app is located
-RUN mkdir -p /opt/django-app
+RUN mkdir -p /opt/django-app \
+  && mkdir /opt/django-app/db  # if we want to host a existing sqlite file
 
 # it is a best practise to create a seperate user and not execute everything with root
 RUN useradd -d /opt/django-app django-app-user
 
 # change the ownership of the path to the created user
-RUN chown django-app-user /opt/django-app
+RUN chown -R django-app-user /opt/django-app
 
 # from now on, every action in the Dockerfile is done using the given user
 USER django-app-user
