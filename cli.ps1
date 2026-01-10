@@ -12,11 +12,12 @@ COMMANDS
     test                🧪 Executing unit-tests...
     runserver           🚀 Starting Django development server...
     compose             🚀 Starting containers with docker compose...
+    docker-simple       🚀 Start one docker container...
     help, -?            show this help message
 #>
 param(
   [Parameter(Position=0)]
-  [ValidateSet("migrate", "adminuser", "test", "runserver", "compose", "help")]
+  [ValidateSet("migrate", "adminuser", "test", "runserver", "compose", "docker-simple", "help")]
   [string]$Command
 )
 
@@ -52,6 +53,12 @@ function Command-compose {
     docker compose -f ./containers/compose.yaml rm && docker compose -f ./containers/compose.yaml up --build 
 }
 
+function Command-docker-simple {
+    Write-Host -ForegroundColor Green "🚀 Docker build and run..."
+    docker build -t django-simple -f ./containers/simple/Dockerfile .
+    docker run -it -p 8000:8000 django-simple
+}   
+
 
 if (!$Command) {
     Command-Help
@@ -64,5 +71,6 @@ switch ($Command) {
     "test" { Command-test }
     "runserver" { Command-runserver }
     "compose" { Command-compose }
+    "docker-simple" { Command-docker-simple }
     "help"  { Command-Help }
 }
