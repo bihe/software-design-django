@@ -9,6 +9,7 @@ USAGE
 COMMANDS
     migrate             📜 Executing database migrations...
     adminuser           🤖 Create a admin-user via django...
+    requirements.txt    📦 Create requirements.txt to use with pip
     test                🧪 Executing unit-tests...
     runserver           🚀 Starting Django development server...
     compose             🚀 Starting containers with docker compose...
@@ -17,7 +18,7 @@ COMMANDS
 #>
 param(
   [Parameter(Position=0)]
-  [ValidateSet("migrate", "adminuser", "test", "runserver", "compose", "docker-simple", "help")]
+  [ValidateSet("migrate", "adminuser", "requirements.txt", "test", "runserver", "compose", "docker-simple", "help")]
   [string]$Command
 )
 
@@ -31,6 +32,11 @@ function Command-migrate {
 function Command-adminuser {
     Write-Host -ForegroundColor Green "🤖 Create a admin-user via django..."
     uv run python manage.py createsuperuser
+}
+
+function Command-requirements {
+    Write-Host -ForegroundColor Green "📦 Create requirements.txt ..."
+    uv pip freeze > requirements.txt
 }
 
 function Command-test {
@@ -68,6 +74,7 @@ if (!$Command) {
 switch ($Command) {
     "migrate" { Command-migrate }
     "adminuser" { Command-adminuser }
+    "requirements.txt" { Command-requirements }
     "test" { Command-test }
     "runserver" { Command-runserver }
     "compose" { Command-compose }
