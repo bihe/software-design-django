@@ -3,6 +3,9 @@ services:
   database:
     image: mariadb:lts
     restart: always
+    #ports:
+    #  # expose the default db port and map it to 3306 on localhost
+    #  - 3306:3306
     volumes:
       # https://hub.docker.com/_/mariadb @ Initializing the database contents
       - "./initial_data.sql:/docker-entrypoint-initdb.d/1.sql"
